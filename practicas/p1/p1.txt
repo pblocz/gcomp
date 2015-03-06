@@ -1,0 +1,19 @@
+a)	i. equivalente
+	ii. equivalente
+	iii. no equivalente
+	iv. equivalente
+
+
+b)	i. Es posible con k = cte y ks = 0. Por ejemplo la circunferencia (cos(t),sin(t))
+	ii. No es posible por que si k = cte, entonces no puede ser ks != 0 por ser su derivada.
+	iii. Es posible con k = e^t, ya que entonces ks = e^t. Como por el teorema fundamental para cualquier curvatura existe una curva, entonces podemos encontrar la curva resolviendo el sistema de ecuaciones.
+	iv. Por las mismas razones que ii no es posible.
+
+
+c)	Sea Y(t) = (x(t),y(t)) una curva simétrica respecto al eje Y con X1 = Y(t1), X2 = Y(t2) dos puntos simétricos entre sí pertenecientes a dicha curva. Entonces dx1(t1) = dx2(t2) y dy1(t1) = -dy2(t2), por lo que la curvatura será k1 = -k2 para las dos mitades de la curva y para t=0, dy = d2y = 0, por lo que k0 = 0. Como dk1 = dk2, eso quiere decir que la signatura es simetrica respecto al eje dk = 0.
+Esto se puede generalizar a una curva simetrica a cualquier otra recta mediante un movimiento rígido.
+    
+
+d)	Sea Y1(t) = (x1(t),y1(t)) una curva en I = [I0,If], entonces si se invierte la orientación se obtiene otra curva Y2(t) = (x2(t),y2(t)) = (x1(I0+If-t),y1(I0+If-t)) en I. 
+De esta manera, dx2(t2) = -dx1(t1), dy2(t2) = -dy1(t1), d2x2(t2) = -d2x1(t1) y d2y2(t2) = -d2y1(t1), para cualesquiera t1 y t2 tales que Y1(t1) = Y2(t2) <-> Y1(t2) = Y2(t1).
+Por lo que la curvatura k2 = (dx2*d2y2-dy2*d2x2) / sqrt(dx2^2+dy2^2) = k1, es decir, la curvatura no varía al cambiar la orientación, y por tanto tambien dk1 = dk2, por lo que la signatura no varía al cambiar la orientación.

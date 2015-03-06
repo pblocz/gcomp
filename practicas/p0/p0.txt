@@ -1,0 +1,14 @@
+Práctica 0
+Pablo Cabeza García
+
+- a: cuando la curva Y(s) es un punto P, Y(s)=P para todo s en P,
+  entonces Y''(s)=0, con lo que la curvatura es 0 y la torsión no está
+  definida, así que no se le aplica el teorema fundamental.
+
+- b: Sea la curva Y(s) = (x(s),y(s)), está parametrizada por la
+  longitud de arco si |Y'(s)| = |(x'(s),y'(s))| = 1 = |(dx,dy)|, lo
+  cual no tiene por que cumplirse, si por ejemplo |(dx0,dy0)|!=1
+
+- d: k(s)=1
+- e: k(s)=cos(s)
+- f: k(s)=4* cos(s)^2 + sen(s)^2
