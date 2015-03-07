@@ -50,9 +50,7 @@ class Geodesic(object):
     def show(self): plt.show(); return self
 
     def clear(self): 
-        try: plt.clf(self.figure); plt.close(self.figure)
-        except: pass
-
+        self.figure.clear()
         self.figure = None
         return self
 
@@ -153,6 +151,7 @@ class Parametrization3D(BaseParametrized):
 def modular_plot(geo):
     "plots the geodesic in the space [0,2pi]x[0,2pi]"
 
+    fig = plt.figure()
     p = geo.points; pi2 = 2*np.pi
     ul = p[:,0]; l = []
 
@@ -167,7 +166,8 @@ def modular_plot(geo):
             vec = ull[(j < ull[:,1]) & ( ull[:,1] < j+pi2)] % pi2
             if vec.size != 0: l.append(vec)
 
-    for d in l: plt.plot(d[:,0],d[:,1])
+    for d in l: plt.plot(d[:,0],d[:,1], figure=fig)
+    return fig
 
 
 
@@ -203,10 +203,10 @@ def main():
     torus.savefig('periodic.png', size=(1000,1000))
     if args.show: torus.show()
 
-    modular_plot(periodic)
-    periodic.savefig('periodic_uv.png')
-    if args.show: periodic.show()
-    periodic.clear()
+    fig = modular_plot(periodic)
+    fig.savefig('periodic_uv.png')
+    if args.show: fig.show()
+    fig.clear()
 
 
     # Example for non periodic geodesic #
@@ -216,10 +216,10 @@ def main():
     torus.savefig('minidense.png', size=(1000,1000))
     if args.show: torus.show()
 
-    modular_plot(minidense)
-    minidense.savefig('minidense_uv.png')
-    if args.show: minidense.show()
-    minidense.clear()
+    fig = modular_plot(minidense)
+    fig.savefig('minidense_uv.png')
+    if args.show: fig.show()
+    fig.clear()
 
     # Same Example, but more loops #
     dense = torusff.geodesic([0,3*np.pi/4.0],[1,np.sqrt(2)],[0,5000*np.pi],npoints=1000000)
@@ -228,10 +228,10 @@ def main():
     torus.savefig('dense.png', size=(1000,1000))
     if args.show: torus.show()
     
-    modular_plot(dense)
-    minidense.savefig('dense_uv.png')
-    if args.show: dense.show()
-    dense.clear()
+    fig = modular_plot(dense)
+    fig.savefig('dense_uv.png')
+    if args.show: fig.show()
+    fig.clear()
 
 
     # Poincare half-plane geodesics #
