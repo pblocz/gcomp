@@ -1,39 +1,72 @@
+#! /usr/bin/python -O
 # -*- coding: utf-8 -*-
 '''
 Practica 3
 
 @author: Pablo Cabeza García y Diego González
 '''
-import sys
+import sys, re, argparse
 import sympy as sp, numpy as np, matplotlib.pyplot as plt
 from mayavi import mlab
 from scipy.integrate import odeint
 from scipy.spatial.distance import pdist
 
-class BaseParametrized(object): pass
+def hex2rgb(color): 
+    return tuple(int(i,16)/255.0 for i in re.match('#?(.{2})(.{2})(.{2})',color).groups())
+
+class BaseParametrized(object):
+    def __init__(self, parameters):
+        self.u, self.v = [v for v,_ in parameters]
+        self.uR, self.vR = [list(r) for _,r in parameters]
+
+    @property 
+    def parameters(self): return [(self.u, self.uR), (self.v, self.vR)]
+    
+    @property 
+    def variables(self): return [self.u, self.v]
+
+
+    @staticmethod 
+    def _range(R,points): return np.linspace(*(R + [points]))
+
+    @property 
+    def urange(self, npoints = 100): return self._range(self.uR, npoints)
+
+    @property 
+    def vrange(self, npoints = 100): return self._range(self.vR, npoints)
+
 
 
 class Geodesic(object):
     def __init__(self, points):
         self.points = points
+        self.figure = None
 
-    def plot(self):
-        print self.points
-        return plt.plot(self.points[:,0],self.points[:,1])
-        #return plt.plot(self.points.T)
-    def show(self): 
-        plt.show()
+    def plot(self, figure=None):
+        self.figure = figure or self.figure or plt.figure()
+        plt.plot(self.points[:,0],self.points[:,1], figure = self.figure)
+        return self.figure
+
+    def show(self): plt.show(); return self
+
+    def clear(self): 
+        try: plt.clf(self.figure); plt.close(self.figure)
+        except: pass
+
+        self.figure = None
+        return self
+
+    def savefig(self,*args,**kwargs): 
+        plt.savefig(*args,figure= self.figure,**kwargs)
+        return self
 
 
-class FFForm(object):
+class FFForm(BaseParametrized):
     def __init__(self,E,F,G, parameters=None):
+        super(FFForm, self).__init__(parameters)
         self.E, self.F, self.G = E, F, G
 
-        variables = [v for v,_ in parameters]
-        self.u, self.v = variables
-        self.uR, self.vR = [list(r) for _,r in parameters]
-
-    def _curvize(self,surf, fvs): return surf.subs(zip([self.u,self.v],fvs))
+    def _curvize(self,surf, fvs): return surf.subs(zip(self.variables,fvs))
 
     def _rhs_gen(self):
         u, v, t = self.u, self.v, sp.symbols('t')
@@ -46,13 +79,15 @@ class FFForm(object):
         Iv = self._curvize(I.diff(v),  list(U))
         I = self._curvize(I, list(U))
 
-        U__ = (1/2.0 * sp.Matrix([U_.T * Iu * U_, U_.T*Iv*U_]).T - U_.T*(Iu*U_[0] + Iv*U_[1])) * (I**-1); 
+        U__ = (1/2.0 * sp.Matrix([U_.T * Iu * U_, U_.T*Iv*U_]).T - U_.T*(Iu*U_[0] + Iv*U_[1]))\
+              * (I**-1); 
         U__ = sp.simplify(U__).T
 
         MU__ = U__.subs(zip(list(U_), [du,dv] ,))
         MU__ = MU__.subs(zip(list(U), [u,v],))
 
-        return sp.lambdify((u,v,du,dv),sp.Matrix([du,dv,MU__[0],MU__[1]]).T, modules='numpy')
+        return sp.lambdify((u,v,du,dv), sp.Matrix([du,dv,MU__[0],MU__[1]]).T,
+                           modules='numpy')
 
 
     def geodesic(self, p0, vt, interval, npoints=100):
@@ -65,25 +100,19 @@ class FFForm(object):
         return Geodesic(solv)
 
 
-class Parametrization3D(object):
-
+class Parametrization3D(BaseParametrized):
     def __init__(self, x,y,z,parameters=None):
-        variables = [v for v,_ in parameters]
-        self.u, self.v = variables
-        self.uR, self.vR = [list(r) for _,r in parameters]
+        super(Parametrization3D,self).__init__(parameters)
 
         self.x, self.y, self.z = x, y, z
-        self.lx, self.ly, self.lz = [sp.lambdify(variables,s,modules='numpy') for s in [x,y,z]]
+        self.lx, self.ly, self.lz = [sp.lambdify(self.variables,s,modules='numpy') \
+                                     for s in [x,y,z]]
         self.figure = {}
 
-
-    @property
-    def parameters(self): return [(self.u, self.uR,), (self.v, self.vR,)]
-
-    @property
+    @property 
     def surface(self): return sp.Matrix([self.x, self.y, self.z])
 
-    @property
+    @property 
     def lsurface(self): return [self.lx, self.ly, self.lz]
 
 
@@ -93,86 +122,137 @@ class Parametrization3D(object):
         return FFForm(E,F,G, self.parameters)
 
 
-    def _mesh(self, points):
-        u_range = np.linspace(*(self.uR + [points]))
-        v_range = np.linspace(*(self.uR + [points]))
-        u_mesh, v_mesh = np.meshgrid(u_range, v_range)
+    def _mesh(self, points,**kwargs):
+        u_mesh, v_mesh = np.meshgrid(self.urange, self.urange)
 
-        mlab.mesh(*[k(u_mesh,v_mesh) for k in self.lsurface],figure = self.figure)
+        mlab.mesh(*[k(u_mesh,v_mesh) for k in self.lsurface],figure = self.figure,
+                  **kwargs)
     
-    def _plot3d(self,curve, points):
-        u_range = np.linspace(*(self.uR + [points]))
-        v_range = np.linspace(*(self.uR + [points]))
-        mlab.plot3d(*[(k(curve[:,0],curve[:,1])) for k in self.lsurface], figure= self.figure)
+    def _plot3d(self,curve, points,**kwargs):
+        mlab.plot3d(*[(k(curve[:,0],curve[:,1])) for k in self.lsurface], figure= self.figure,
+                    **kwargs)
 
-    def plot(self,curve = None, points = 100, figure=None):
+    def plot(self,curve = None, points = 100, figure=None,**kwargs):
         self.figure = figure or self.figure or mlab.figure()
 
-        if curve: self._plot3d(curve.points,points)
-        else: self._mesh(points)
+        if curve: self._plot3d(curve.points,points, **kwargs)
+        else: self._mesh(points, **kwargs)
 
         return self.figure
 
-    def show(self,figure=None): mlab.draw(figure = figure or self.figure); mlab.show()
+    def show(self,figure=None): mlab.draw(figure = figure or self.figure); mlab.show(); return self
+    def clear(self): 
+        try: mlab.clf(self.figure); mlab.close(self.figure)
+        except: pass
 
-    
+        self.figure = None
+        return self
+    def savefig(self,*args,**kwargs): mlab.savefig(*args,figure=self.figure,**kwargs); return self
+
+
+def modular_plot(geo):
+    "plots the geodesic in the space [0,2pi]x[0,2pi]"
+
+    p = geo.points; pi2 = 2*np.pi
+    ul = p[:,0]; l = []
+
+    Mul, mul = np.amax(ul), np.amin(ul)
+    Mupi, mupi = np.ceil(Mul / (2*np.pi)), np.floor(mul / (2*np.pi))
+    for i in np.arange(pi2*mupi,pi2*Mupi,pi2):
+        ull = p[(i < p[:,0]) & (p[:,0] < i+pi2)]
+
+        vll = ull[:,1]; Mvl, mvl = np.amax(vll), np.amin(vll)
+        Mvpi, mvpi = np.ceil(Mvl / pi2), np.floor(mvl / pi2)
+        for j in np.arange(pi2*mvpi,pi2*Mvpi,pi2):
+            vec = ull[(j < ull[:,1]) & ( ull[:,1] < j+pi2)] % pi2
+            if vec.size != 0: l.append(vec)
+
+    for d in l: plt.plot(d[:,0],d[:,1])
+
+
+
 def main():
-    
-    u,v = sp.symbols('u,v')
-    
+    # Parse arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--no-show','-n', dest='show', action="store_false", default=True)
+    args = parser.parse_args()
+
+    # Define variables to use
+    u,v = sp.symbols('u,v')    
+
+    # Define torus and get first fundamental form
     R = 2; r = 1
-    para = Parametrization3D( sp.cos(u) * (R + r*sp.cos(v)),
+    torus = Parametrization3D(sp.cos(u) * (R + r*sp.cos(v)),
                               (sp.sin(u) * (R + r*sp.cos(v))),
                               r *sp.sin(v),
                               parameters = [(u,(0,2*np.pi)),(v,(0,2*np.pi))])
-    para.plot()
-    geo = para.firstForm().geodesic((0,0),(0,1),(0,2*np.pi))
-    para.plot(geo)
-    para.show()
+    torusff = torus.firstForm()
 
-    geo.plot()
-    geo.show()
+    
+    # Example for generators circunferences #
+    torus.plot()
+    torus.plot(torusff.geodesic((0,0),(0,1), (0,2*np.pi)))
+    torus.plot(torusff.geodesic((0,0),(1,0), (0,2*np.pi)), color=hex2rgb('#A753A4'))
+    torus.savefig('generators.png', size=(1000,1000))
+    if args.show: torus.show()
+
+    # Example for perodic geodesic #
+    periodic = torusff.geodesic([0,np.pi/4.0],[1,1],[0,100*np.pi],npoints=10000)
+    torus.clear().plot()
+    torus.plot(periodic, line_width=1.0, tube_radius=None) # this disables big tubes
+    torus.savefig('periodic.png', size=(1000,1000))
+    if args.show: torus.show()
+
+    modular_plot(periodic)
+    periodic.savefig('periodic_uv.png')
+    if args.show: periodic.show()
+    periodic.clear()
 
 
+    # Example for non periodic geodesic #
+    minidense = torusff.geodesic([0,3*np.pi/4.0],[1,np.sqrt(2)],[0,500*np.pi],npoints=100000)
+    torus.clear().plot()
+    torus.plot(minidense, line_width=1.0, tube_radius=None) # this disables big tubes
+    torus.savefig('minidense.png', size=(1000,1000))
+    if args.show: torus.show()
+
+    modular_plot(minidense)
+    minidense.savefig('minidense_uv.png')
+    if args.show: minidense.show()
+    minidense.clear()
+
+    # Same Example, but more loops #
+    dense = torusff.geodesic([0,3*np.pi/4.0],[1,np.sqrt(2)],[0,5000*np.pi],npoints=1000000)
+    torus.clear().plot()
+    torus.plot(dense, line_width=1.0, tube_radius=None) # this disables big tubes
+    torus.savefig('dense.png', size=(1000,1000))
+    if args.show: torus.show()
+    
+    modular_plot(dense)
+    minidense.savefig('dense_uv.png')
+    if args.show: dense.show()
+    dense.clear()
+
+
+    # Poincare half-plane geodesics #
     poincare = FFForm(1/v**2, 0, 1/v**2, parameters = [(u, []), (v, [])])
-    pgeo = poincare.geodesic((1,10),(1,10),(-100,100),npoints=10000)
-    pgeo.plot()
-    pgeo.show()
+    
+    fig = None
+    for exp in [i*2 for i in range(1,11)]:
+        fig = poincare.geodesic((0,1),(1,exp),(-100,100),npoints=10000)\
+                      .plot(figure = fig)
+        fig = poincare.geodesic((0,1),(-1,exp),(-100,100),npoints=10000)\
+                      .plot(figure = fig)
+
+    fig = poincare.geodesic((0,40),(1,0),(0,1000),npoints=10000)\
+                  .plot(figure = fig)
+    fig = poincare.geodesic((0,40),(-1,0),(0,1000),npoints=10000)\
+                  .plot(figure = fig)
+
+    plt.axes().set_aspect('equal')
+    plt.savefig('poincare.png', figure=fig)
+    if args.show: plt.show()
 
     return 0
 
 if __name__ == "__main__": sys.exit(main())
-
-# Circunferencia circulo generador (grosor del donuts)
-# geodesic(surf,[0,0],[0,1],[0,2*np.pi],1,varis=[u,v])
-
-# # Circunferencia al rededor del círculo de revolución (radio del donuts)
-# geodesic(surf,[0,0],[1,0],[0,2*np.pi],1,varis=[u,v])
-
-# Geodésica periódica con muchos puntos
-# geodesic(surf,[0,0],[1,np.pi],[0,2*np.pi],1,varis=[u,v],npoints=10000)
-# geodesic(surf,[0,np.pi/4.0],[1,1],[0,100*np.pi],1,varis=[u,v],npoints=10000)
-
-# geodesic(surf,[0,0],[1,4],[0,40*np.pi],1,varis=[u,v],npoints=10000)
-# geodesic(surf,[0,0],[1,1000],[0,5*np.pi],1,varis=[u,v],npoints=1000)
-
-# geodesic(surf,[0,np.pi/4.0],[1,np.sqrt(2)],[0,1000*np.pi],1,varis=[u,v],npoints=1000000)
-
-# theta = np.linspace(0,2*np.pi,100)
-# t = np.linspace(-1,1,100)
-
-# theta_mesh, t_mesh = np.meshgrid(theta,t)
-
-# x = np.cosh(t_mesh) * np.cos(theta_mesh)
-# y = np.cosh(t_mesh) * np.sin(theta_mesh)
-# z = np.sinh(t_mesh)
-
-# x_ = np.cosh(t) * np.cos(theta)
-# y_ = np.cosh(t) * np.sin(theta)
-# z_ = np.sinh(t)
-
-
-
-# mlab.plot3d(x_, y_, z_)
-# mlab.mesh(x,y,z)
-# mlab.show()
