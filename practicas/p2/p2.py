@@ -15,6 +15,10 @@ def hex2rgb(color):
     return tuple(int(i,16)/255.0 for i in re.match('#?(.{2})(.{2})(.{2})',color).groups())
 
 class BaseParametrized(object):
+    '''
+    Base class that holds data about parametrization variables and ranges
+    '''
+
     def __init__(self, parameters):
         self.u, self.v = [v for v,_ in parameters]
         self.uR, self.vR = [list(r) for _,r in parameters]
@@ -38,6 +42,11 @@ class BaseParametrized(object):
 
 
 class Geodesic(object):
+    '''
+    A numerical geodesic with plotting methods from matplotlib
+    After using it call clear or results will overlap
+    '''
+
     def __init__(self, points):
         self.points = points
         self.figure = None
@@ -60,13 +69,21 @@ class Geodesic(object):
 
 
 class FFForm(BaseParametrized):
+    '''
+    Represents the first fundamental form of a pametrized surface
+    '''
+
     def __init__(self,E,F,G, parameters=None):
         super(FFForm, self).__init__(parameters)
         self.E, self.F, self.G = E, F, G
 
     def _curvize(self,surf, fvs): return surf.subs(zip(self.variables,fvs))
 
-    def _rhs_gen(self):
+    def _geodesic_rhs_gen(self):
+        '''
+        uses sympy to generate the rhs of the ode system to find
+        geodesics
+        '''
         u, v, t = self.u, self.v, sp.symbols('t')
         du,dv = sp.symbols('du dv')
         U = sp.Matrix((sp.Function('u')(t),sp.Function('v')(t),))
@@ -89,7 +106,11 @@ class FFForm(BaseParametrized):
 
 
     def geodesic(self, p0, vt, interval, npoints=100):
-        rhs = self._rhs_gen()
+        '''
+        Uses numpy to solve the ode system with (u,v)=p0 (u',v')=vt
+        to find the numerical geodesic
+        '''
+        rhs = self._geodesic_rhs_gen()
         def rhs_eqs(Y,t): return np.squeeze(np.asarray(rhs(*Y)))
         init_cond = list(p0) + list(vt)
 
@@ -99,6 +120,10 @@ class FFForm(BaseParametrized):
 
 
 class Parametrization3D(BaseParametrized):
+    '''
+    Symbolic parametrization of a surface
+    '''
+
     def __init__(self, x,y,z,parameters=None):
         super(Parametrization3D,self).__init__(parameters)
 
@@ -149,7 +174,11 @@ class Parametrization3D(BaseParametrized):
 
 
 def modular_plot(geo):
-    "plots the geodesic in the space [0,2pi]x[0,2pi]"
+    '''
+    Plots the geodesic in the space [0,2pi]x[0,2pi]
+    
+    It splits the geodesic it chuncks in [0,2pi] and plots them separatedly
+    '''
 
     fig = plt.figure()
     p = geo.points; pi2 = 2*np.pi
