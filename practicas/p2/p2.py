@@ -59,7 +59,9 @@ class Geodesic(object):
     def show(self): plt.show(); return self
 
     def clear(self): 
-        self.figure.clear()
+        if self.figure: self.figure.clear()
+        else: plt.clf()
+
         self.figure = None
         return self
 
@@ -200,6 +202,47 @@ def modular_plot(geo):
 
 
 
+def plot_surface_geo(surf, p0, vt, I,
+                     geokwargs = {},
+                     fform = None, 
+                     show = True, 
+                     savefig = None,
+                     clear = True,
+                     surfplot = True, 
+                     **kwargs):
+    fform = fform or surf.firstForm()
+    geo = fform.geodesic(p0,vt,I,**geokwargs)
+
+    if clear: surf.clear()
+    if surfplot: surf.plot()
+    
+    surf.plot(geo,**kwargs)
+    
+    if savefig: surf.savefig(savefig, size=(1000,1000))
+    if show: surf.show()
+
+    return geo
+
+def plot_fform_geo(fform, p0, vt, I,
+                   geokwargs = {},
+                   show = True, 
+                   savefig = None,
+                   clear = True,
+                   **kwargs):
+    geo = fform.geodesic(p0,vt,I,**geokwargs)
+
+    if clear: geo.clear()
+    
+    geo.plot(**kwargs)
+    
+    if savefig: geo.savefig(savefig, size=(1000,1000))
+    if show: geo.show()
+
+    return geo
+
+
+
+
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser()
@@ -217,31 +260,66 @@ def main():
                               parameters = [(u,(0,2*np.pi)),(v,(0,2*np.pi))])
     torusff = torus.firstForm()
 
+    poincare = FFForm(1/v**2, 0, 1/v**2, parameters = [(u, []), (v, [])])
+       
+                             
     
     # Example for generators circunferences #
+    plot_surface_geo(torus, (0,0),(0,1), (0,2*np.pi),
+                     fform = torusff, show=False)
+    plot_surface_geo(torus, (0,0),(1,0), (0,2*np.pi),
+                     fform = torusff, 
+                     show=args.show, surfplot=False, clear=False, 
+                     savefig='gemerators.png', color=hex2rgb('#A753A4'))
+
+    # The above is equivalent to this:
+    '''
     torus.plot()
     torus.plot(torusff.geodesic((0,0),(0,1), (0,2*np.pi)))
-    torus.plot(torusff.geodesic((0,0),(1,0), (0,2*np.pi)), color=hex2rgb('#A753A4'))
+    torus.plot(torusff.geodesic((0,0),(1,0), (0,2*np.pi)), \
+               color=hex2rgb('#A753A4'))
     torus.savefig('generators.png', size=(1000,1000))
     if args.show: torus.show()
+    '''
+
 
     # Example for perodic geodesic #
-    periodic = torusff.geodesic([0,np.pi/4.0],[1,1],[0,100*np.pi],npoints=10000)
-    torus.clear().plot()
-    torus.plot(periodic, line_width=1.0, tube_radius=None) # this disables big tubes
-    torus.savefig('periodic.png', size=(1000,1000))
-    if args.show: torus.show()
+    periodic = plot_surface_geo(torus, [0,np.pi/4.0],[1,1],[0,100*np.pi],
+                                fform = torusff,
+                                geokwargs={'npoints':10000},
+                                show = args.show,
+                                savefig = 'periodic.png',
 
+                                # extra arguments for plot3d
+                                line_width=1.0,
+                                tube_radius = None)
+    
+    # plot uv in by segments to avoid having extra lines
     fig = modular_plot(periodic)
     fig.savefig('periodic_uv.png')
     if args.show: fig.show()
     fig.clear()
 
 
-    # Example for non periodic geodesic #
-    minidense = torusff.geodesic([0,3*np.pi/4.0],[1,np.sqrt(2)],[0,500*np.pi],npoints=100000)
+    # example for non periodic geodesic
+    geo = plot_surface_geo(torus, (0,np.pi-np.pi/10.0),(1,1/np.pi), 
+                           (0,10*2*np.pi),
+                     geokwargs={'npoints':10000},
+                     fform = torusff,
+                     savefig='nonperiodic.png',
+                     show=args.show,)
+
+    fig = modular_plot(geo)
+    fig.savefig('nonperiodic_uv.png')
+    if args.show: fig.show()
+    fig.clear()
+
+
+    # Example for non periodic, dense geodesic, without plot_surface_geo #
+    minidense = torusff.geodesic([0,3*np.pi/4.0],[1,np.sqrt(2)],
+                                 [0,500*np.pi], npoints=100000)
     torus.clear().plot()
-    torus.plot(minidense, line_width=1.0, tube_radius=None) # this disables big tubes
+    torus.plot(minidense, line_width=1.0, tube_radius=None)
     torus.savefig('minidense.png', size=(1000,1000))
     if args.show: torus.show()
 
@@ -250,10 +328,12 @@ def main():
     if args.show: fig.show()
     fig.clear()
 
-    # Same Example, but more loops #
-    dense = torusff.geodesic([0,3*np.pi/4.0],[1,np.sqrt(2)],[0,5000*np.pi],npoints=1000000)
+
+    # Same Example, but more loops, it may take some time... #
+    dense = torusff.geodesic([0,3*np.pi/4.0],[1,np.sqrt(2)],
+                             [0,5000*np.pi],npoints=1000000)
     torus.clear().plot()
-    torus.plot(dense, line_width=1.0, tube_radius=None) # this disables big tubes
+    torus.plot(dense, line_width=1.0, tube_radius=None)
     torus.savefig('dense.png', size=(1000,1000))
     if args.show: torus.show()
     
