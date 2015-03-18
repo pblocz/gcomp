@@ -163,8 +163,6 @@ if __name__ == "__main__":
         return curve #numpy array of size (num_points, 2)
 
 
-    
-
     import timeit
     degree = 15
     num_points = 100
@@ -176,17 +174,20 @@ if __name__ == "__main__":
     def ffberns(P): FasterBernsteinPolicy(P)(npoints = num_points)
 
 
-    timeit.main(['-n',number,
+    timeit.main(['-v',
+                 '-n',number,
                  '-s',"from __main__ import eval_bezier, tt, degree, fberns, FastBernsteinPolicy",
                  "eval_bezier(degree, tt, fberns)",
                  ])
 
-    timeit.main(['-n',number,
+    timeit.main(['-v',
+                 '-n',number,
                  '-s',"from __main__ import eval_bezier, tt, degree,ffberns,FasterBernsteinPolicy",
                  "eval_bezier(degree, tt, ffberns)",
                  ])
 
-    timeit.main(['-n',number,
+    timeit.main(['-v',
+                  '-n',number,
                  '-s',"from __main__ import eval_bezier, tt, degree, berns, BernsteinPolicy",
                  "eval_bezier(degree, tt, berns)",
                  ])
