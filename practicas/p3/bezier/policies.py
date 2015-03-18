@@ -62,7 +62,7 @@ class FastBernsteinPolicy(BezierPolicy):
         return r
 
     @classmethod
-    def _binom(cls, n,k):
+    def _binom(cls, n, k):
         '''
         binomial implementation using a table cache, preinitialised
         '''
@@ -77,15 +77,21 @@ class FastBernsteinPolicy(BezierPolicy):
 
         return cls.table[index]
 
+    @classmethod
+    def _binom_row(cls, n):
+        base_idx = ((n*(n+1)) >> 1)
+        if len(cls.table) < base_idx+n+1:
+            return np.array(cls._binom(n,i) for i in range(base_idx, base_idex + n + 1))
+                
+        return np.array(cls.table[base_idx:base_idx+n+1])
 
     def _berstein(self,t):
         e = self._fastexp(t, self.N-1)
 
-        res = np.empty((self.N, len(t),))
-        for i in range(self.N):
-            # carefully choose operations to not generate temporals
-            np.multiply(e[i,:],e[self.N-i-1,::-1],res[i, :])
-            res[i, :] *= self._binom(self.N - 1, i)
+        res = e * e[::-1,::-1]
+
+        np.multiply(res.T, self._binom_row(self.N - 1),res.T)
+        #for i in range(self.N): res[i, :] *= self._binom(self.N - 1, i)
         return res
 
 
@@ -104,12 +110,16 @@ class FasterBernsteinPolicy(FastBernsteinPolicy):
     
     @classmethod
     def _fastexp(cls,t,n):
-        m = len(t) - 1 
-        d, r = cls.limit / m , cls.limit % m
-        def gen(end, step, off, points): 
-            i,r,no = 0, 0, 0
-            while r + no <= end: yield r + no; i += 1; r += step ; no = (i*off)/points
-        return cls.precalc[:n+1,list(gen(cls.limit, d, r, m))]
+        r = np.tile(t,(n+1,1)); r[0].fill(1)
+        np.multiply.accumulate(r[1:],out=r[1:])
+        return r
+
+        # m = len(t) - 1 
+        # d, r = cls.limit / m , cls.limit % m
+        # def gen(end, step, off, points): 
+        #     i,r,no = 0, 0, 0
+        #     while r + no <= end: yield r + no; i += 1; r += step ; no = (i*off)/points
+        # return cls.precalc[:n+1,list(gen(cls.limit, d, r, m))]
 
 
 if __name__ == "__main__":
@@ -157,26 +167,40 @@ if __name__ == "__main__":
 
     import timeit
     degree = 15
-    num_points = 10000 
-    number = 1000
+    num_points = 100
+    number = 10000
     tt = np.linspace(0, 1, num_points)
-
-    stuff = None
 
     def berns(P): BernsteinPolicy(P)(npoints = num_points)
     def fberns(P): FastBernsteinPolicy(P)(npoints = num_points)
     def ffberns(P): FasterBernsteinPolicy(P)(npoints = num_points)
 
-    print(timeit.timeit("eval_bezier(degree, tt, ffberns)",
-                        setup="from __main__ import eval_bezier, tt, degree, ffberns, FasterBernsteinPolicy", number=number))
 
-    
-    print(timeit.timeit("eval_bezier(degree, tt, fberns)",
-                        setup="from __main__ import eval_bezier, tt, degree, fberns, FastBernsteinPolicy", number=number))
+    timeit.main(['-n',number,
+                 '-s',"from __main__ import eval_bezier, tt, degree, fberns, FastBernsteinPolicy",
+                 "eval_bezier(degree, tt, fberns)",
+                 ])
+
+    timeit.main(['-n',number,
+                 '-s',"from __main__ import eval_bezier, tt, degree,ffberns,FasterBernsteinPolicy",
+                 "eval_bezier(degree, tt, ffberns)",
+                 ])
+
+    timeit.main(['-n',number,
+                 '-s',"from __main__ import eval_bezier, tt, degree, berns, BernsteinPolicy",
+                 "eval_bezier(degree, tt, berns)",
+                 ])
 
 
-    print(timeit.timeit("eval_bezier(degree, tt, berns)",
-                        setup="from __main__ import eval_bezier, tt, degree, berns, BernsteinPolicy", number=number))
+    # print(timeit.timeit("eval_bezier(degree, tt, fberns)",
+    #                     setup="from __main__ import eval_bezier, tt, degree, fberns, FastBernsteinPolicy", number=number))
+
+    # print(timeit.timeit("eval_bezier(degree, tt, ffberns)",
+    #                     setup="from __main__ import eval_bezier, tt, degree, ffberns, FasterBernsteinPolicy", number=number))
+
+
+    # print(timeit.timeit("eval_bezier(degree, tt, berns)",
+    #                     setup="from __main__ import eval_bezier, tt, degree, berns, BernsteinPolicy", number=number))
     
 
     # print(timeit.timeit("eval_deCasteljau(degree, t)",
