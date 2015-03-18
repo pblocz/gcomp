@@ -34,11 +34,11 @@ class BernsteinPolicy(BezierPolicy):
 
 
 class FastBernsteinPolicy(BezierPolicy):
-    import sys, os.path as path; sys.path.insert(0,path.dirname(path.realpath(__file__)))
+    # import sys, os.path as path; sys.path.insert(0,path.dirname(path.realpath(__file__)))
     
-    from binom import table
+    from p3bezier.binom import table
 
-    del sys.path[0]
+    # del sys.path[0]
 
     @staticmethod
     def _fastexp(t,n):
@@ -110,38 +110,44 @@ class FasterBernsteinPolicy(FastBernsteinPolicy):
     
     @classmethod
     def _fastexp(cls,t,n):
-        r = np.tile(t,(n+1,1)); r[0].fill(1)
-        np.multiply.accumulate(r[1:],out=r[1:])
-        return r
+        # r = np.tile(t,(n+1,1)); r[0].fill(1)
+        # np.multiply.accumulate(r[1:],out=r[1:])
+        # return r
 
-        # m = len(t) - 1 
-        # d, r = cls.limit / m , cls.limit % m
-        # def gen(end, step, off, points): 
-        #     i,r,no = 0, 0, 0
-        #     while r + no <= end: yield r + no; i += 1; r += step ; no = (i*off)/points
-        # return cls.precalc[:n+1,list(gen(cls.limit, d, r, m))]
+        m = len(t) - 1 
+        d, r = cls.limit / m , cls.limit % m
+        def gen(end, step, off, points): 
+            i,r,no = 0, 0, 0
+            while r + no <= end: yield r + no; i += 1; r += step ; no = (i*off)/points
+        return cls.precalc[:n+1,list(gen(cls.limit, d, r, m))]
 
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
+    from p3cbezier import bernstein as cberns
     poly = [ [0,0], [1,1.5],[2, 2], [1.25,0.7] ]
 
     ffbcurve = FasterBernsteinPolicy(poly)()
     fbcurve = FastBernsteinPolicy(poly)()
     bcurve = BernsteinPolicy(poly)()
+    ccurve = np.array(cberns(poly,500))
 
     poly = np.array(poly)
     plt.figure(1)
-    plt.subplot(311)
+    plt.subplot(411)
     plt.plot(bcurve[:,0], bcurve[:,1])
     plt.plot(poly[:,0], poly[:,1], "ro")
 
-    plt.subplot(312)
+    plt.subplot(412)
     plt.plot(fbcurve[:,0], fbcurve[:,1])
     plt.plot(poly[:,0], poly[:,1], "ro")
 
-    plt.subplot(313)
+    plt.subplot(413)
     plt.plot(ffbcurve[:,0], ffbcurve[:,1])
+    plt.plot(poly[:,0], poly[:,1], "ro")
+
+    plt.subplot(414)
+    plt.plot(ccurve[:,0], ccurve[:,1])
     plt.plot(poly[:,0], poly[:,1], "ro")
 
 
@@ -165,43 +171,49 @@ if __name__ == "__main__":
 
     import timeit
     degree = 15
-    num_points = 100
+    num_points = 500
     number = 10000
     tt = np.linspace(0, 1, num_points)
 
-    def berns(P): BernsteinPolicy(P)(npoints = num_points)
-    def fberns(P): FastBernsteinPolicy(P)(npoints = num_points)
-    def ffberns(P): FasterBernsteinPolicy(P)(npoints = num_points)
+    def berns(P): return BernsteinPolicy(P)(npoints = num_points)
+    def fberns(P): return FastBernsteinPolicy(P)(npoints = num_points)
+    def ffberns(P): return FasterBernsteinPolicy(P)(npoints = num_points)
+    
+
+    # timeit.main(['-v',
+    #              '-n',number,
+    #              '-s',"from __main__ import eval_bezier, tt, degree, fberns, FastBernsteinPolicy",
+    #              "eval_bezier(degree, tt, fberns)",
+    #              ])
+
+    # timeit.main(['-v',
+    #              '-n',number,
+    #              '-s',"from __main__ import eval_bezier, tt, degree,ffberns,FasterBernsteinPolicy",
+    #              "eval_bezier(degree, tt, ffberns)",
+    #              ])
+
+    # timeit.main(['-v',
+    #               '-n',number,
+    #              '-s',"from __main__ import eval_bezier, tt, degree, berns, BernsteinPolicy",
+    #              "eval_bezier(degree, tt, berns)",
+    #              ])
 
 
-    timeit.main(['-v',
-                 '-n',number,
-                 '-s',"from __main__ import eval_bezier, tt, degree, fberns, FastBernsteinPolicy",
-                 "eval_bezier(degree, tt, fberns)",
-                 ])
-
-    timeit.main(['-v',
-                 '-n',number,
-                 '-s',"from __main__ import eval_bezier, tt, degree,ffberns,FasterBernsteinPolicy",
-                 "eval_bezier(degree, tt, ffberns)",
-                 ])
-
-    timeit.main(['-v',
-                  '-n',number,
-                 '-s',"from __main__ import eval_bezier, tt, degree, berns, BernsteinPolicy",
-                 "eval_bezier(degree, tt, berns)",
-                 ])
+    def ccberns(P): return cberns(P,num_points)
 
 
-    # print(timeit.timeit("eval_bezier(degree, tt, fberns)",
-    #                     setup="from __main__ import eval_bezier, tt, degree, fberns, FastBernsteinPolicy", number=number))
+    print(timeit.timeit("eval_bezier(degree, tt, fberns)",
+                        setup="from __main__ import eval_bezier, tt, degree, fberns, FastBernsteinPolicy", number=number))
 
-    # print(timeit.timeit("eval_bezier(degree, tt, ffberns)",
-    #                     setup="from __main__ import eval_bezier, tt, degree, ffberns, FasterBernsteinPolicy", number=number))
+    print(timeit.timeit("eval_bezier(degree, tt, ffberns)",
+                        setup="from __main__ import eval_bezier, tt, degree, ffberns, FasterBernsteinPolicy", number=number))
 
 
-    # print(timeit.timeit("eval_bezier(degree, tt, berns)",
-    #                     setup="from __main__ import eval_bezier, tt, degree, berns, BernsteinPolicy", number=number))
+    print(timeit.timeit("eval_bezier(degree, tt, berns)",
+                        setup="from __main__ import eval_bezier, tt, degree, berns, BernsteinPolicy", number=number))
+
+    print(timeit.timeit("eval_bezier(degree, tt, ccberns)",
+                        setup="from __main__ import eval_bezier, tt, degree, ccberns, FastBernsteinPolicy", number=number))
     
 
     # print(timeit.timeit("eval_deCasteljau(degree, t)",

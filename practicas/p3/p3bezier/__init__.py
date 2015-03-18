@@ -1,4 +1,5 @@
-from .policy import FastBernsteinPolicy
+import sys
+from .policies import FastBernsteinPolicy
 
 class Bezier:
     def __init__(self, polygon, policy = FastBernsteinPolicy):
@@ -17,3 +18,10 @@ class Bezier:
         ax.add_line(self.curve)
         fig.canvas.draw()
         
+
+def main(args=None):
+    args = args or sys.argv
+
+    return 0
+
+if __name__ == "__main__": sys.exit(main())
