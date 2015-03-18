@@ -34,5 +34,5 @@ class CurvaDeBezier(object):
         self.fig.canvas.draw()     
         self.fig.show()
         
-p = np.array([[0,0],[1,1],[2,0.555]])
+p = np.array([[0,0],[1,1],[2,0.5]])
 CurvaDeBezier(p).plot_bezier()
