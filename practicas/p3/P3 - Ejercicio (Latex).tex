@@ -1,0 +1,68 @@
+%% LyX 2.1.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[spanish]{article}
+\usepackage[T1]{fontenc}
+\usepackage{amstext}
+\usepackage{babel}
+\addto\shorthandsspanish{\spanishdeactivate{~<>}}
+
+\begin{document}
+
+\title{\textbf{Práctica 3}}
+
+
+\author{Pablo Cabeza García y Diego González Domínguez}
+
+\maketitle
+
+\section*{Ejercicio:}
+
+\textbf{Demuéstrese que el máximo de los polinomios de Bernstein $B_{i}^{n}(t)$
+con $t\epsilon\left[0,1\right]$ se alcanza en $t=\frac{i}{n}$:}
+
+Los polinomios de Bernstein se pueden escribir como:
+
+\begin{center}
+$B_{i}^{n}(t)=\left(\begin{array}{c}
+n\\
+i
+\end{array}\right)\text{·}t^{i}\text{·\ensuremath{\left(1-t\right)}}^{n-i}$
+\par\end{center}
+
+Derivando en función de $t$:
+
+\begin{center}
+$B_{i}^{n}(t)'=\left(\begin{array}{c}
+n\\
+i
+\end{array}\right)\text{·}\left[i\text{·}t^{i-1}\text{·\ensuremath{\left(1-t\right)}}^{n-i}-t^{i}\text{·\ensuremath{\left(n-i\right)\text{·}\left(1-t\right)}}^{n-i-1}\right]=n\text{·}\left(\begin{array}{c}
+n-1\\
+i-1
+\end{array}\right)\text{·}t^{i-1}\text{·\ensuremath{\left(1-t\right)}}^{n-i}-n\text{·}\left(\begin{array}{c}
+n-1\\
+i
+\end{array}\right)\text{·}t^{i}\text{·\ensuremath{\left(1-t\right)}}^{n-i-1}=n\text{·}\left[B_{i-1}^{n-1}(t)-B_{i}^{n-1}(t)\right]$
+\par\end{center}
+
+Para obtener el máximo, igualamos a cero:
+
+\begin{center}
+$B_{i}^{n}(t)'=\left(\begin{array}{c}
+n\\
+i
+\end{array}\right)\text{·}\left[i\text{·}t^{i-1}\text{·\ensuremath{\left(1-t\right)}}^{n-i}-t^{i}\text{·\ensuremath{\left(n-i\right)\text{·}\left(1-t\right)}}^{n-i-1}\right]=\left(\begin{array}{c}
+n\\
+i
+\end{array}\right)\text{·}t^{i-1}\text{·}(1-t)^{n-i-1}\text{·}\left[i\text{·}(1-t)-t\text{·\ensuremath{\left(n-i\right)}}\right]=0$
+\par\end{center}
+
+\begin{center}
+$i\text{·}(1-t)-t\text{·\ensuremath{\left(n-i\right)}}=0\quad\rightarrow\quad i\text{·}(1-t)=t\text{·\ensuremath{\left(n-i\right)}}\quad\rightarrow\quad i=t\text{·}n\quad\rightarrow\quad t=\frac{i}{n}$
+\par\end{center}
+
+Para ver que es el máximo y no un mínimo solo hace falta ver que en
+los extremos de la función se tiene que \textbf{$B_{i}^{n}(0)=B_{i}^{n}(1)=0$}
+(salvo si $i=0\,\acute{o}\,n$, en cuyo caso \textbf{$B_{0}^{n}(0)=1$}
+y \textbf{$B_{n}^{n}(1)=1$}, y son los máximos), mientras que \textbf{$B_{i}^{n}(t)>0$
+}para\textbf{ $t\epsilon(0,1)$}.
+\end{document}
