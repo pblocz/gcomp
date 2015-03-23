@@ -8,6 +8,7 @@ def eval_bezier(degree, t, algo):
 
 
 class Tester(object):
+    '''Tester class for bezier curves'''
 
     def __init__(self, fun, args, loops = 1000, extra_args = lambda: []):
         self.fun = fun
@@ -28,33 +29,53 @@ class Tester(object):
             print "%s with arg %s: %f" % (name, n, r[-1][1],) 
         return r
 
-def bezier_tester(bezier):
+def bezier_tester(bezier,args = range(100,2000+1, 190), loops = 1000):
     degree = 15
     def extra(): return [np.random.uniform(-20, 20, (degree + 1, 2))]
-    return Tester(bezier, range(100,2000+1, 190), extra_args = extra)
+    return Tester(bezier, args, extra_args = extra, loops = loops)
                       
     
-# Tester(fun_to_test, loops, extra_args = []).time()
 
 def main(args = None):
     args = args or sys.argv
     
     from . import policies as plc
+    from p3cbezier import bernstein as CBernstein
 
+    print "Basic test (as published in the campus)"
+
+    ct, = bezier_tester(lambda n, p: CBernstein(p,n),[100], loops = 10000).time("CBerns") 
+    t, = bezier_tester(lambda n, p: plc.BernsteinPolicy(p)(n),[100], loops = 10000).time("Bernstein")
+    ft, = bezier_tester(lambda n, p: plc.FastBernsteinPolicy(p)(n),[100], loops = 10000).time("FastBerns")
+    fft, = bezier_tester(lambda n, p: plc.FasterBernsteinPolicy(p)(n),[100], loops = 10000).time("FasterBerns") 
+    djt, = bezier_tester(lambda n, p: plc.DeCasteljauPolicy(p)(n),[100], loops = 10000).time("DeCasteljau") 
+    djtf, = bezier_tester(lambda n, p: plc.DeCasteljauFastPolicy(p)(n),[100], loops = 10000).time("DeCasteljauFast")
+
+    print
+    print "Press any key to continue to a more complex test, ctrl+c to quit"
+    raw_input()
+
+    # ct = bezier_tester(lambda n, p: CBernstein(p,n)).time("CBerns") 
     t = bezier_tester(lambda n, p: plc.BernsteinPolicy(p)(n)).time("Bernstein")
     ft = bezier_tester(lambda n, p: plc.FastBernsteinPolicy(p)(n)).time("FastBerns")
     fft = bezier_tester(lambda n, p: plc.FasterBernsteinPolicy(p)(n)).time("FasterBerns") 
+    djt = bezier_tester(lambda n, p: plc.DeCasteljauFastPolicy(p)(n)).time("DeCasteljau") 
 
     import matplotlib.pyplot as plt
-
     fig = plt.figure()
 
-    plt.plot([x for x,_ in t], [y for _,y in t], figure = fig)
-    plt.plot([x for x,_ in ft], [y for _,y in ft], figure = fig)
-    plt.plot([x for x,_ in fft], [y for _,y in fft], figure = fig)
+    # cl, = plt.plot([x for x,_ in ct], [y for _,y in ct], figure = fig, label="cbernstein")
+    l, = plt.plot([x for x,_ in t], [y for _,y in t], figure = fig, label="Bernstein")
+    fl, = plt.plot([x for x,_ in ft], [y for _,y in ft], figure = fig, label="FastBernstein")
+    ffl, = plt.plot([x for x,_ in fft], [y for _,y in fft], figure = fig, label="FasterBernstein")
+    dj, = plt.plot([x for x,_ in djt], [y for _,y in djt], figure = fig, label="De Casteljau")
 
-    fig.savefig("algorithms.png")
+    plt.legend([l,fl,ffl,dj,])
+    fig.savefig("algorithms-pablodiego.png")
 
-    return (t,ft,fft)
+    print "Saved images in 'algorithms-pablodiego.png'"
+    plt.show()
+
+    # return (t, ft, fft,dj)
 
 if __name__ == "__main__": main()

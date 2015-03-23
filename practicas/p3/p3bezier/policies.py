@@ -4,7 +4,7 @@ from scipy.special import binom
 class BezierPolicy(object):
     '''
     Base class used to implement different curve
-    methods
+    methods. It computes the curve given by the polygon.
     '''
 
     def __init__(self, polygon):
@@ -17,7 +17,7 @@ class BezierPolicy(object):
         
 
 class BernsteinPolicy(BezierPolicy):
-
+    '''Naive Bernstain computation using numpy'''
     def _berstein(self,t):
         res = np.zeros((self.N+1, len(t),))
         for i in range(self.N):        
@@ -34,11 +34,10 @@ class BernsteinPolicy(BezierPolicy):
 
 
 class FastBernsteinPolicy(BezierPolicy):
-    # import sys, os.path as path; sys.path.insert(0,path.dirname(path.realpath(__file__)))
-    
-    from p3bezier.binom import table
+    '''Optimized Berstein computation (more vectorized), that uses precomputed binom'''
 
-    # del sys.path[0]
+    from p3bezier.data import binom
+    table =  binom.table
 
     @staticmethod
     def _fastexp(t,n):
@@ -47,7 +46,8 @@ class FastBernsteinPolicy(BezierPolicy):
 
             table[i] = t**i
 
-        It makes extensive use of numpy views to improve performance
+        It makes extensive use of numpy views to improve performance. 
+        It does O(log N) calls to numpy
         '''
 
         r = np.empty( [n+1, len(t)] )
@@ -79,6 +79,8 @@ class FastBernsteinPolicy(BezierPolicy):
 
     @classmethod
     def _binom_row(cls, n):
+        '''Returns the whole row on binomial coefficients of n'''
+
         base_idx = ((n*(n+1)) >> 1)
         if len(cls.table) < base_idx+n+1:
             return np.array(cls._binom(n,i) for i in range(base_idx, base_idex + n + 1))
@@ -87,11 +89,8 @@ class FastBernsteinPolicy(BezierPolicy):
 
     def _berstein(self,t):
         e = self._fastexp(t, self.N-1)
-
         res = e * e[::-1,::-1]
-
         np.multiply(res.T, self._binom_row(self.N - 1),res.T)
-        #for i in range(self.N): res[i, :] *= self._binom(self.N - 1, i)
         return res
 
 
@@ -101,25 +100,51 @@ class FastBernsteinPolicy(BezierPolicy):
             
 
 class FasterBernsteinPolicy(FastBernsteinPolicy):
-    '''
-    Fails because array index implies copy in numpy
-    '''
+    '''It uses pre-computed coefficients, currently there are up to degree 30'''
+    from p3bezier.data.berncoef import coefficients_np as coefficients
 
-    limit = 1 << 15
-    precalc = FastBernsteinPolicy._fastexp(np.linspace(0,1,limit + 1), 1 << 9)
-    
-    @classmethod
-    def _fastexp(cls,t,n):
-        # r = np.tile(t,(n+1,1)); r[0].fill(1)
-        # np.multiply.accumulate(r[1:],out=r[1:])
-        # return r
+    def compute(self,t):
+        e = self._fastexp(t,self.N-1)
+        coef = np.dot(self.coefficients[self.N-2],self.polygon)
+        return np.dot(coef.T,e).T
 
-        m = len(t) - 1 
-        d, r = cls.limit / m , cls.limit % m
-        def gen(end, step, off, points): 
-            i,r,no = 0, 0, 0
-            while r + no <= end: yield r + no; i += 1; r += step ; no = (i*off)/points
-        return cls.precalc[:n+1,list(gen(cls.limit, d, r, m))]
+
+class DeCasteljauPolicy(BezierPolicy):
+    '''Compute Bernstein polynomial evaluted in the given points using DeCasteljau algorithm'''
+
+    def compute(self, t): 
+        prevx = np.dot(self.polygon[:,0][None].T,t[None]); actx = np.empty(prevx.shape)
+        prevy = np.dot(self.polygon[:,1][None].T,t[None]); acty = np.empty(prevy.shape)
+        for j in range(1,self.N):
+            for i in range(self.N-j):
+                actx[i] = prevx[i+1]*t + prevx[i]*(1-t)
+                acty[i] = prevy[i+1]*t + prevy[i]*(1-t)
+
+            prevx, actx = actx, prevx
+            prevy, acty = acty, prevy
+
+        return np.vstack((prevx[0,:],prevy[0,:])).T
+
+
+class DeCasteljauFastPolicy(BezierPolicy):
+    '''Faster DeCasteljau algorithm that uses more numpy'''
+
+    def compute(self, t): 
+        rt = t[::-1]
+        prevx = np.dot(self.polygon[:,0][None].T,t[None]); actx = np.empty(prevx.shape)
+        prevy = np.dot(self.polygon[:,1][None].T,t[None]); acty = np.empty(prevx.shape)
+
+        for j in range(1,self.N):
+            np.multiply(np.roll(prevx,-1,axis=0),t,actx)
+            np.add(actx,np.multiply(prevx,rt),actx)
+
+            np.multiply(np.roll(prevy,-1,axis=0),t,acty)
+            np.add(acty,np.multiply(prevy,rt),acty)
+
+            prevx, actx = actx[:-1], prevx[:-1]
+            prevy, acty = acty[:-1], prevy[:-1]
+
+        return np.vstack((prevx[0,:],prevy[0,:])).T
 
 
 if __name__ == "__main__":
@@ -130,25 +155,37 @@ if __name__ == "__main__":
     ffbcurve = FasterBernsteinPolicy(poly)()
     fbcurve = FastBernsteinPolicy(poly)()
     bcurve = BernsteinPolicy(poly)()
-    ccurve = np.array(cberns(poly,500))
+    ccurve = np.array(cberns(poly,100))
+
+    dccurve = DeCasteljauPolicy(poly)()
+    dfccurve = DeCasteljauFastPolicy(poly)()
 
     poly = np.array(poly)
     plt.figure(1)
-    plt.subplot(411)
+    plt.subplot(421)
     plt.plot(bcurve[:,0], bcurve[:,1])
     plt.plot(poly[:,0], poly[:,1], "ro")
 
-    plt.subplot(412)
+    plt.subplot(422)
     plt.plot(fbcurve[:,0], fbcurve[:,1])
     plt.plot(poly[:,0], poly[:,1], "ro")
 
-    plt.subplot(413)
+    plt.subplot(423)
     plt.plot(ffbcurve[:,0], ffbcurve[:,1])
     plt.plot(poly[:,0], poly[:,1], "ro")
 
-    plt.subplot(414)
+    plt.subplot(424)
     plt.plot(ccurve[:,0], ccurve[:,1])
     plt.plot(poly[:,0], poly[:,1], "ro")
+
+    plt.subplot(425)
+    plt.plot(dccurve[:,0], dccurve[:,1])
+    plt.plot(poly[:,0], poly[:,1], "ro")
+
+    plt.subplot(426)
+    plt.plot(dfccurve[:,0], dfccurve[:,1])
+    plt.plot(poly[:,0], poly[:,1], "ro")
+
 
 
     plt.show()
@@ -161,23 +198,18 @@ if __name__ == "__main__":
         return curve #numpy array of size (num_points, 2)
     
 
-    def eval_deCasteljau(degree, t):
-        P = np.random.uniform(-20, 20, (degree + 1, 2))
-    
-        #enter here your computations
-        curve = None #delete this line
-        return curve #numpy array of size (num_points, 2)
-
-
     import timeit
     degree = 15
-    num_points = 500
+    num_points = 100
     number = 10000
     tt = np.linspace(0, 1, num_points)
 
     def berns(P): return BernsteinPolicy(P)(npoints = num_points)
     def fberns(P): return FastBernsteinPolicy(P)(npoints = num_points)
     def ffberns(P): return FasterBernsteinPolicy(P)(npoints = num_points)
+    
+    def cast(P): return DeCasteljauPolicy(P)(npoints = num_points)
+    def fcast(P): return DeCasteljauFastPolicy(P)(npoints = num_points)
     
 
     # timeit.main(['-v',
@@ -214,6 +246,15 @@ if __name__ == "__main__":
 
     print(timeit.timeit("eval_bezier(degree, tt, ccberns)",
                         setup="from __main__ import eval_bezier, tt, degree, ccberns, FastBernsteinPolicy", number=number))
+
+
+
+    print(timeit.timeit("eval_bezier(degree, tt, cast)",
+                        setup="from __main__ import eval_bezier, tt, degree, cast, DeCasteljauPolicy", number=number))
+
+
+    print(timeit.timeit("eval_bezier(degree, tt, fcast)",
+                        setup="from __main__ import eval_bezier, tt, degree, fcast, DeCasteljauFastPolicy", number=number))    
     
 
     # print(timeit.timeit("eval_deCasteljau(degree, t)",

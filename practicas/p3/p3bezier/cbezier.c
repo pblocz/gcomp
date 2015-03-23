@@ -12,7 +12,6 @@ typedef double  FLOAT;
 // Prototype declarations
 //
 
-static PyObject * p3cbezier_system(PyObject *self, PyObject *args);
 static PyObject * p3cbezier_bernstein(PyObject *self, PyObject *args);
 
 
@@ -22,9 +21,6 @@ static PyObject * p3cbezier_bernstein(PyObject *self, PyObject *args);
 //
 static PyMethodDef CBezierMethods[] = {
  
-    {"system",  p3cbezier_system, METH_VARARGS,
-     "Execute a shell command."},
-
     {"bernstein",  p3cbezier_bernstein, METH_VARARGS,
      "compute bernstein"},
 
@@ -38,13 +34,11 @@ static struct {FLOAT* list; size_t points; size_t power;}
 #endif // CACHE_POWERS
 
 
-#include "binom/cbinom.data"
+#include "data/cbinom.data"
 #define BINOM(n,m) (binomials[(((n)*((n)+1)) >> 1) + (m)])
 
-#include "exponentials.data"
+static double pool[1<<22];
 
-static double pool[1<<15];
-static unsigned points_list[1<<15];
 
 
 //
@@ -62,110 +56,63 @@ PyMODINIT_FUNC initp3cbezier(void) {
 // Method implementation
 //
 
-PyObject * p3cbezier_system(PyObject *self, PyObject *args) {
-    const char *command;
-    int sts;
-
-    if (!PyArg_ParseTuple(args, "s", &command))
-        return NULL;
-    sts = system(command);
-    return Py_BuildValue("i", sts);
-}
-
 #define PX(i) ((i) << 1)
 #define PY(i) (((i) << 1) + 1)
+#define EXP(i,n) (npoints*(i)+(n))
 
+static FLOAT polynom[1000];
 PyObject * p3cbezier_bernstein(PyObject *self, PyObject *args) {
-    int i;
-    unsigned npoints;
-    struct PyObject* polyarg, *temp;
+    unsigned i,j, npoints, length, degree;
+    PyObject* polyarg, *temp, *list;
+    FLOAT *pidx = polynom, *bidx = pool, k=0.0, step;
 
     // Parse args
     if (!PyArg_ParseTuple(args, "OI", &polyarg, &npoints)) return NULL;
 
-    temp = PySequence_Fast(polyarg, "argument must be iterable");
-    size_t length = PySequence_Fast_GET_SIZE(temp);
-    FLOAT* polynom = malloc((length << 1) * sizeof(FLOAT));
-
     // Parse polynomial to polynom
-    // printf("arg1: %uL; l: %u\n", length, npoints);
+    temp = PySequence_Fast(polyarg, "argument must be iterable");
+    degree = (length = PySequence_Fast_GET_SIZE(temp)) - 1;
     for(i=0; i<length; i++) {
-	struct PyObject* aux = PySequence_Fast(PySequence_Fast_GET_ITEM(temp, i), 
+	list = PySequence_Fast(PySequence_Fast_GET_ITEM(temp, i), 
 					       "points of list must be iterables");
-	polynom[i << 1] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(aux,0));
-	polynom[(i << 1) + 1] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(aux,1));
-	Py_DECREF(aux);
+	*pidx++ = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(list,0));
+	*pidx++ = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(list,1));
+	Py_DECREF(list);
     }
+    Py_DECREF(temp);
     // Py_DECREF(polyarg);
 
 
-
-    // Use polynom to compute bernstein
-
-    // do magic with polynom!!!
-    // polynom[i << 1], polynom[(i << 1) + 1]
+    ////////////////////////////
+    //  Compute exponentials  //
+    ////////////////////////////
 
 
-        /*     m = len(t) - 1  */
-        /* d, r = cls.limit / m , cls.limit % m */
-        /* def gen(end, step, off, points):  */
-        /*     i,r,no = 0, 0, 0 */
-        /*     while r + no <= end: yield r + no; i += 1; r += step ; no = (i*off)/points */
-        /* return cls.precalc[:n+1,list(gen(cls.limit, d, r, m))] */
 
-    PyObject *list = PyList_New(npoints);
-    Py_INCREF(list);
+    step = 1.0/(npoints-1); 
+    pidx = pool + npoints;
+    for(; k<= 1.0; k+=step){ *pidx++ = k; *bidx++= 1.0;  }
+    for(j=2; j<length; j++) for(k=0; k<=1; k+=step) { *pidx++ = (*bidx++)*k; }
 
-
-    unsigned degree = length - 1, m = npoints - 1, d = (jlimit-1)/m, r = (jlimit-1) % m;
-    unsigned j=0, k=0, jj=0, no = 0;
-
-    for(; j < npoints; ++j, k+=d, (no=(j*r)/m), (jj=k+no)) points_list[j] = jj;
-
-    for(j=0,jj=0, k=points_list[npoints-1]; j < npoints; ++j) {
-	// printf("index %u ->", j); 
-	jj=points_list[j]; k=points_list[npoints-j-1];
-	// printf(" point %u\n", jj);
-
-	double rx = 0, ry = 0;
-	for(i=0; i<= degree; i++) {
-	    // printf("\t%f %f %f\n", BINOM(degree,i), exponentials[i][jj], exponentials[degree - i][k]);
-
-	    double aux = BINOM(degree,i) * exponentials[i][jj] * exponentials[degree - i][k];
-	    rx += polynom[PX(i)]* aux;
-	    ry += polynom[PY(i)]* aux;
+    memset(pidx, 0, sizeof(double)*2*npoints); 
+    for(i=0, bidx=pidx; i<= degree; i++, pidx = bidx) { 
+	for(j=0; j < npoints; ++j) {
+	    double aux = BINOM(degree,i) * pool[EXP(i,j)] * pool[EXP(degree - i,npoints-j-1)];
+	    *pidx++ += polynom[PX(i)]* aux;
+	    *pidx++ += polynom[PY(i)]* aux;
+	    //printf("idx (%u,%u): [%fl,%fl]\n", i, j, *(pidx-2), *(pidx-1));
 	}
-	PyList_SetItem(list, j, Py_BuildValue("[dd]", rx, ry));
-	// printf("[%f,%f]\n", rx,ry);
     }
 
-    // printf("asdfdsfa\n");
+    list = PyList_New(npoints); Py_INCREF(list);
+    for(j=0; j<npoints; ++j,bidx+=2){
+	//double a1 = *bidx++, a2=*bidx++;
+	PyList_SetItem(list, j, Py_BuildValue("[dd]", *bidx, *(bidx+1)));
+	//printf("built point [%fl,%fl]\n", a1, a2);
+    }
 
-    /* binomials[0]; */
-    /* BINOM(4,2); */
-     
-    /* ilimit; jlimit; exponentials; */
+    //printf("returnning\n");
 
-
-
-    // Create output list of points as python object
-
-    /* PyObject *list = PyList_New(length); */
-    /* Py_INCREF(list); */
-
-    /* for(i=0; i<length; i++) { */
-    /* 	PyList_SetItem(list, i, Py_BuildValue("[dd]", polynom[i << 1], polynom[(i << 1) + 1])); */
-    /* } */
-
-
-    // printf("pre-returning\n");
-
-    Py_DECREF(temp);
-    // free(polynom);
-
-    // printf("returning\n");
-
-    //Py_RETURN_NONE;
     return list;
 }
 

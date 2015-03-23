@@ -3,7 +3,8 @@ from setuptools import setup
 from distutils.core import  Extension
 
 e_modules = [
-    Extension('p3cbezier', sources = ['p3bezier/cbezier.c'], extra_compile_args=['-O2']),
+    Extension('p3cbezier', sources = ['p3bezier/cbezier.c'], 
+              extra_compile_args=['-Ofast', '-floop-parallelize-all']),
 ]
 
 setup (name = 'p3bezier',
@@ -12,16 +13,17 @@ setup (name = 'p3bezier',
        author = "Pablo Cabeza & Diego González",
        author_email = "jcabeza@ucm.es | diegogon@ucm.es",
        description = 'This is a demo package',
-       packages = ['p3bezier', 'p3bezier.binom'],
+       packages = ['p3bezier', 'p3bezier.data'],
        
-       data_files = [('p3bezier/binom/',['p3bezier/binom/binom.data'],)],
+       data_files = [('p3bezier/data/',['p3bezier/data/binom.data'],)],
        ext_modules = e_modules,
        
 
 
        entry_points={
            'console_scripts': [
-               'p3bezier = p3bezier.tester:main',
+               'p3bezier-tester = p3bezier.tester:main',
+               'p3bezier-plot = p3bezier.plot:main',
            ]
        },
 
