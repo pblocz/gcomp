@@ -39,6 +39,15 @@ class IntersectionBezier(object):
 
         return (divA, divB[::-1])
 
+    @staticmethod
+    def _bbox(poly):
+        return [(np.amin(poly[:,0]),np.amin(poly[:,1]),),
+                (np.amax(poly[:,0]),np.amax(poly[:,1]),)]
+
+    @staticmethod
+    def _bbox_intersect(self, box1, box2):
+        
+        
 
     def __call__(self, polyA, polyB, epsilon = _EPSILON):
         '''
