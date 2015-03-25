@@ -12,7 +12,10 @@ class IntersectionBezier(object):
     '''
 
     _EPSILON = 0.01
-
+    
+    from collections import namedtuple
+    Rectangle = namedtuple('Rectangle', 'xmin ymin xmax ymax')
+    
     def _division(self, poly, t = 0.5):
         N = len(poly)
         divA, divB = np.empty((N,2)), np.empty((N,2))
@@ -39,16 +42,31 @@ class IntersectionBezier(object):
 
         return (divA, divB[::-1])
 
-    @staticmethod
-    def _bbox(poly):
-        return [(np.amin(poly[:,0]),np.amin(poly[:,1]),),
-                (np.amax(poly[:,0]),np.amax(poly[:,1]),)]
+    @classmethod
+    def _bbox(cls,poly):
+        return cls.Rectangle(np.amin(poly[:,0]),np.amin(poly[:,1]),np.amax(poly[:,0]),np.amax(poly[:,1]))
 
     @staticmethod
-    def _bbox_intersect(self, box1, box2):
-        
-        
+    def _bbox_intersect(box1, box2):
+        dx = min(box1.xmax, box2.xmax) - max(box1.xmin, box2.xmin)
+        dy = min(box1.ymax, box2.ymax) - max(box1.ymin, box2.ymin)
+        return (dx >= 0) and (dy >= 0)
 
+    @staticmethod
+    def _seg_intersect(a1,a2, b1,b2) :
+        def perp( a ) :
+            b = np.empty_like(a)
+            b[0] = -a[1]
+            b[1] = a[0]
+            return b
+        da = a2-a1
+        db = b2-b1
+        dp = a1-b1
+        dap = perp(da)
+        denom = np.dot( dap, db)
+        num = np.dot( dap, dp )
+        return (num/denom)*db + b1
+    
     def __call__(self, polyA, polyB, epsilon = _EPSILON):
         '''
         args:
@@ -60,7 +78,28 @@ class IntersectionBezier(object):
 
         return: k intersection points numpy array with shape = (k,2)
         '''
-        pass
+        ret = []
+        
+        bboxA, bboxB = self._bbox(polyA), self._bbox(polyB)
+        def delta(poly):
+            return (poly - np.roll(poly,-1,axis=0))[:-1]
+        
+        deltaA, deltaB = delta(delta(polyA)), delta(delta(polyB))
+        #DA = np.apply_along_axis(np.linalg.norm, 1, deltaA)
+        DA, DB = np.amax(np.sum(np.abs(deltaA)**2,axis=-1)**(1./2)), np.amax(np.sum(np.abs(deltaB)**2,axis=-1)**(1./2))
+        n, m = len(polyA), len(polyB)
+        if self._bbox_intersect(bboxA, bboxB):
+            if n*(n-1)/160.*DA > epsilon:
+                divA, divB = self._division(polyA)
+                ret.extend(self(divA,polyB, epsilon = epsilon))
+                ret.extend(self(divB,polyB, epsilon = epsilon))
+            elif m*(m-1)/160.*DB > epsilon:
+                divA, divB = self._division(polyB)
+                ret.extend(self(polyA,divA, epsilon = epsilon))
+                ret.extend(self(polyA,divB, epsilon = epsilon))
+            else:
+                return [self._seg_intersect(polyA[0], polyA[-1],polyB[0], polyB[-1])]
+        return ret
 
     def __plot__(self, polyA, polyB, k = 3, figure = None):
         '''
@@ -72,7 +111,7 @@ class IntersectionBezier(object):
         '''
         if k == 0: 
             plt.plot(polyA[:,0], polyA[:,1])
-            plt.plot(polyA[:,0], polyA[:,1],"ro")
+            #plt.plot(polyA[:,0], polyA[:,1],"ro")
             return
         
         # plt.plot(polyA[:,0], polyA[:,1])
@@ -87,7 +126,7 @@ class IntersectionBezier(object):
         self.__plot__(divA, None, k - 1)
         self.__plot__(divB, None, k - 1)
 
-        pass
+        #pass
 
 # Tiempos del profe
 # 2.85 3.10, 3.39
@@ -95,14 +134,19 @@ class IntersectionBezier(object):
 import sys
 
 def main(args=None):
-    args = sys.argv
+    args = args or sys.argv
     # Generamos interactivo
 
-    puntos = [[0,0],[1,1],[0.2,-10],[2,0]]
+    puntosA = [[0,0],[1,2],[3,1],[0,1]]
+    puntosB = [[0,2],[1,0],[2,0],[0,2]]
 
-    IntersectionBezier().__plot__(np.array(puntos),None, k = 4)
+    IntersectionBezier().__plot__(np.array(puntosA),None, k = 4)
+    IntersectionBezier().__plot__(np.array(puntosB),None, k = 4)
+
+    intr = IntersectionBezier()(np.array(puntosA),np.array(puntosB))
+
+    plt.plot([x for x,_ in intr], [y for _,y in intr], "ro")
     plt.show()
-
     pass
 
 if __name__ == "__main__": sys.exit(main())
