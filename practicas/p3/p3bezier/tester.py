@@ -1,5 +1,5 @@
 import timeit, sys, numpy as np
-
+import matplotlib.pyplot as plt
 
 def eval_bezier(degree, t, algo):
     P = np.random.uniform(-20, 20, (degree + 1, 2))
@@ -27,7 +27,14 @@ class Tester(object):
                  )
             )
             print "%s with arg %s: %f" % (name, n, r[-1][1],) 
+        self.last_time = r
+        self.last_name = name
         return r
+
+    def plot(self, **kwargs):
+        return plt.plot([x for x,_ in self.last_time], 
+                        [y for _,y in self.last_time], 
+                        label=self.last_name, **kwargs)
 
 def bezier_tester(bezier,args = range(100,2000+1, 190), loops = 1000):
     degree = 15
@@ -61,7 +68,7 @@ def main(args = None):
     fft = bezier_tester(lambda n, p: plc.FasterBernsteinPolicy(p)(n)).time("FasterBerns") 
     djt = bezier_tester(lambda n, p: plc.DeCasteljauFastPolicy(p)(n)).time("DeCasteljau") 
 
-    import matplotlib.pyplot as plt
+
     fig = plt.figure()
 
     # cl, = plt.plot([x for x,_ in ct], [y for _,y in ct], figure = fig, label="cbernstein")
