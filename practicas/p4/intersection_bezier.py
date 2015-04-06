@@ -142,7 +142,8 @@ def main(args=None):
 
     IntersectionBezier().__plot__(np.array(puntosA),None, k = 4)
     IntersectionBezier().__plot__(np.array(puntosB),None, k = 4)
-
+    
+    print type(np.array(puntosB))
     intr = IntersectionBezier()(np.array(puntosA),np.array(puntosB))
 
     plt.plot([x for x,_ in intr], [y for _,y in intr], "ro")

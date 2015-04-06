@@ -49,14 +49,11 @@ class FastIntersectionBezierCore(object):
 class IntersectionBezier(FastIntersectionBezierCore):
     _EPSILON = FastIntersectionBezierCore._EPSILON
     
-    
     @staticmethod
     def _delta22(poly):
         a =  np.roll(poly,-1,0)
         np.subtract(poly,a,a)
-
         return np.subtract(a,np.roll(a,-1,0),a)[:-2]
-
 
     def __call__(self, polyA, polyB, epsilon = _EPSILON):
         '''
@@ -122,6 +119,8 @@ class DrawCurves(object):
         self.plt_inters, = pointsA.axes.plot([], [], 'go')
         self.selected_point = None
         self.selected_polygon = True
+        self.k = 3
+        self.epsilon = 0.01
         
         self.cid_press = self.plt_pointsA.figure.canvas.mpl_connect('button_press_event', self.press_event)
         self.cid_move = self.plt_pointsA.figure.canvas.mpl_connect('motion_notify_event', self.move_event)
@@ -129,19 +128,18 @@ class DrawCurves(object):
         self.cid_erease = self.plt_pointsA.figure.canvas.mpl_connect('button_press_event', self.erease_event)
 
         self.intersector = IntersectionBezier()
+    
+    def update_data(self, k, epsilon):
+        self.k = k
+        self.epsilon = epsilon
 
     def update_Bezier(self):
-        # añadir k
-       pA = self.intersector._plot(np.array(self.polygonA), k = 3)
-       self.plt_curveA.set_data([x for x,_ in pA], [y for _,y in pA])
+        pA = self.intersector._plot(np.array(self.polygonA), self.k)
+        self.plt_curveA.set_data([x for x,_ in pA], [y for _,y in pA])
+        pB = self.intersector._plot(np.array(self.polygonB), self.k)
+        self.plt_curveB.set_data([x for x,_ in pB], [y for _,y in pB])
 
-       pB = self.intersector._plot(np.array(self.polygonB), k = 3)
-       self.plt_curveB.set_data([x for x,_ in pB], [y for _,y in pB])
-
-    
     def update_curve(self):
-        "update the drawn curve"
-        
         self.update_Bezier()
         self.plt_pointsA.set_data(self.xsA, self.ysA)
         self.plt_pointsA.figure.canvas.draw()
@@ -150,11 +148,7 @@ class DrawCurves(object):
 
 
     def update_intersection(self):
-        # añadir epsilon
-        intr = self.intersector(
-            np.array(self.polygonA), 
-            np.array(self.polygonB),
-            epsilon = 0.01)
+        intr = self.intersector( np.array(self.polygonA),np.array(self.polygonB),self.epsilon)
         self.plt_inters.set_data([x for x,_ in intr], [y for _,y in intr])
         self.plt_inters.figure.canvas.draw()
     
@@ -256,11 +250,15 @@ def main(args=None):
     data.pack()
     labelK = Label(data, text="K")
     labelK.pack(side=LEFT, padx=2, pady=2)
-    dataK = Entry(data)
+    varK = StringVar()
+    dataK = Entry(data,textvar=varK)
+    dataK.insert(0, "3")
     dataK.pack(side=LEFT, padx=2, pady=2)
-    labelK = Label(data, text="              epsilon")
-    labelK.pack(side=LEFT, padx=2, pady=2)
-    dataE = Entry(data)
+    labelE = Label(data, text="              epsilon")
+    labelE.pack(side=LEFT, padx=2, pady=2)
+    varE = StringVar()
+    dataE = Entry(data, text=0.01, textvar=varE)
+    dataE.insert(0, "0.01")
     dataE.pack(side=LEFT, padx=2, pady=2)
         
     #Se generan los poligonos y sus curvas de Bezier
@@ -274,9 +272,12 @@ def main(args=None):
     def functionB():
         linebuilder.selected_polygon = False
     def actualizar():
+        varK = dataK.get()
+        varE = dataE.get()
+        linebuilder.update_data(int(varK),float(varE))
         linebuilder.update_curve()
         linebuilder.update_intersection()
-        print "Actualizado"  ################################Esto falta por hacer
+       
         
     #Una vez que existen las funciones, se crean los botones y se les asignan las acciones 
     buttonA = Button(buttons, text="Polygon A", command=functionA, fg="red" )
