@@ -10,27 +10,106 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.backend_bases import key_press_handler
 
-class BezierPolicy(object):
-    def __init__(self, polygon):
-        self.polygon = np.array(polygon)
-        self.N = len(self.polygon)
-    def __call__(self, npoints=100, *args, **kwargs): 
-        return self.compute(np.linspace(0, 1, npoints), 
-                            *args, **kwargs)
 
-class BernsteinPolicy(BezierPolicy):
-    def _berstein(self,t):
-        res = np.zeros((self.N+1, len(t),))
-        for i in range(self.N):        
-            res[i, :] = binom(self.N - 1 , i) * t**i * (1 - t)**(self.N - i -1)
-        return res
-    def compute(self, t):
-        bernstein = self._berstein(t)
-        curve_x = sum(self.polygon[i,0] * bernstein[i, :] \
-                      for i in range(self.N))
-        curve_y = sum(self.polygon[i,1] * bernstein[i, :] \
-                      for i in range(self.N))
-        return np.vstack((curve_x, curve_y,)).T
+
+class FastIntersectionBezierCore(object):
+
+    _EPSILON = 0.01
+    
+    @staticmethod
+    def intersect_bbox_check(pA, pB, epsilon = _EPSILON):
+        AX, AY = np.amax(pA,axis=0); Ax, Ay = np.amin(pA, axis=0)
+        BX, BY = np.amax(pB,axis=0); Bx, By =  np.amin(pB, axis=0)
+        return Ax <= BX and AX >= Bx and Ay <= BY and AY >= By
+
+    @staticmethod
+    def division(poly, t = 0.5):
+        divA, divB = np.empty(poly.shape), np.empty(poly.shape)
+        divA[0], divB[0] = poly[0], poly[-1]
+
+        curr = np.copy(poly)
+        for j in xrange(1,len(poly)): 
+            np.add(curr,np.roll(curr,-1,axis=0), curr)
+            curr = np.multiply(curr,t)[:-1]
+            # np.multiply(curr,t,curr) # curr *= t
+
+            divA[j], divB[j] = curr[0], curr[-1]
+
+        return (divA, divB)
+
+    @staticmethod
+    def seg_intersect(a1,a2, b1,b2) :
+        da = a2-a1; da[0], da[1] = da[1], -da[0]
+        db = b2-b1
+        return (np.dot(da,a1-b1)/np.dot(da,db))*db + b1
+        # return db*np.dot(da,a1-b1)/np.dot(da,db) + b1
+
+
+
+class IntersectionBezier(FastIntersectionBezierCore):
+    _EPSILON = FastIntersectionBezierCore._EPSILON
+    
+    
+    @staticmethod
+    def _delta22(poly):
+        a =  np.roll(poly,-1,0)
+        np.subtract(poly,a,a)
+
+        return np.subtract(a,np.roll(a,-1,0),a)[:-2]
+
+
+    def __call__(self, polyA, polyB, epsilon = _EPSILON):
+        '''
+        args:
+        - polyA: shape = (n,2)
+        - polyB: shape = (m,2)
+        
+        kwargs:
+        - epsilon: zero threashold
+
+        return: k intersection points numpy array with shape = (k,2)
+        '''
+        self.lastPolyA, self.lastPolyB = polyA, polyB
+
+        if self.intersect_bbox_check(polyA,polyB):
+            deltaA = self._delta22(polyA)
+            deltaB = self._delta22(polyB)
+
+            DA, DB = np.amax(np.absolute(deltaA)), np.amax(np.absolute(deltaB))
+            n, m, eps = len(polyA), len(polyB), epsilon*8
+
+            if n*(n-1)*DA > eps: polyA, (divA,divB) = polyB, self.division(polyA)
+            elif m*(m-1)*DB > eps: polyA, (divA,divB) = polyA, self.division(polyB)
+            else: return [self.seg_intersect(polyA[0], polyA[-1],polyB[0], polyB[-1])] 
+
+            ret = self(polyA,divA, epsilon = epsilon)
+            ret.extend(self(polyA,divB, epsilon = epsilon))
+
+            self.intersectionPoints = ret
+            return ret
+        self.intersectionPoints = []
+        return []
+
+
+    def _plot(self, polyA, k = 3):
+        '''
+        Plots the curve with k steps
+
+        kwargs:
+        - k: the number of subdivision steps
+        - figure: the matplotlib figure to plot
+        '''
+        if len(polyA) == 0: return []
+        if k == 0: 
+            return polyA
+        
+        divA, divB = self.division(polyA)
+
+        r = self._plot(divA, k - 1)
+        return np.concatenate((r,self._plot(divB[::-1], k - 1)))
+
+
+
 
 class DrawCurves(object):
     def __init__(self, pointsA, pointsB):
@@ -40,6 +119,7 @@ class DrawCurves(object):
         self.polygonA, self.polygonB = zip(self.xsA, self.ysA), zip(self.xsB, self.ysB)
         self.plt_curveA, = pointsA.axes.plot([], [], 'r')
         self.plt_curveB, = pointsB.axes.plot([], [], 'b')
+        self.plt_inters, = pointsA.axes.plot([], [], 'go')
         self.selected_point = None
         self.selected_polygon = True
         
@@ -47,20 +127,36 @@ class DrawCurves(object):
         self.cid_move = self.plt_pointsA.figure.canvas.mpl_connect('motion_notify_event', self.move_event)
         self.cid_release = self.plt_pointsA.figure.canvas.mpl_connect('button_release_event', self.release_event)
         self.cid_erease = self.plt_pointsA.figure.canvas.mpl_connect('button_press_event', self.erease_event)
-    
+
+        self.intersector = IntersectionBezier()
+
     def update_Bezier(self):
-        curve = BernsteinPolicy(self.polygonA)(1000)
-        self.plt_curveA.set_data(curve[:,0], curve[:,1])
-        curve = BernsteinPolicy(self.polygonB)(1000)
-        self.plt_curveB.set_data(curve[:,0], curve[:,1])
+        # añadir k
+       pA = self.intersector._plot(np.array(self.polygonA), k = 3)
+       self.plt_curveA.set_data([x for x,_ in pA], [y for _,y in pA])
+
+       pB = self.intersector._plot(np.array(self.polygonB), k = 3)
+       self.plt_curveB.set_data([x for x,_ in pB], [y for _,y in pB])
+
     
     def update_curve(self):
         "update the drawn curve"
+        
         self.update_Bezier()
         self.plt_pointsA.set_data(self.xsA, self.ysA)
         self.plt_pointsA.figure.canvas.draw()
         self.plt_pointsB.set_data(self.xsB, self.ysB)
         self.plt_pointsB.figure.canvas.draw()
+
+
+    def update_intersection(self):
+        # añadir epsilon
+        intr = self.intersector(
+            np.array(self.polygonA), 
+            np.array(self.polygonB),
+            epsilon = 0.01)
+        self.plt_inters.set_data([x for x,_ in intr], [y for _,y in intr])
+        self.plt_inters.figure.canvas.draw()
     
     def new_point(self, event):
         if self.selected_polygon:
@@ -71,7 +167,10 @@ class DrawCurves(object):
             self.xsB.append(event.xdata)
             self.ysB.append(event.ydata)
             self.polygonB.append([event.xdata,event.ydata])
+        print self.polygonA, self.polygonB
+
         self.update_curve()
+        self.update_intersection()
          
     def press_event(self, event):
         if (event.inaxes != self.plt_pointsA.axes and event.inaxes != self.plt_pointsB.axes) or event.button != 1: 
@@ -97,7 +196,8 @@ class DrawCurves(object):
             self.xsB[self.selected_point] = event.xdata
             self.ysB[self.selected_point] = event.ydata
             self.polygonB[self.selected_point] = [event.xdata,event.ydata]
-        self.update_curve()     
+        self.update_curve()    
+        self.update_intersection() 
         
     def release_event(self, event):  
         if event.inaxes != self.plt_pointsA.axes and event.inaxes != self.plt_pointsB.axes: 
@@ -122,6 +222,7 @@ class DrawCurves(object):
                 del self.ysB[index]
                 del self.polygonB[index]
             self.update_curve()
+            self.update_intersection()
             
 
 def main(args=None):
@@ -173,6 +274,8 @@ def main(args=None):
     def functionB():
         linebuilder.selected_polygon = False
     def actualizar():
+        linebuilder.update_curve()
+        linebuilder.update_intersection()
         print "Actualizado"  ################################Esto falta por hacer
         
     #Una vez que existen las funciones, se crean los botones y se les asignan las acciones 
