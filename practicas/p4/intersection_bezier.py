@@ -162,17 +162,11 @@ def main(args=None):
     puntosA = [[0,0],[1,2],[3,1],[0,1]]
     puntosB = [[0,2],[1,0],[2,0],[0,2]]
 
-    
-    #IntersectionBezier()._plot(np.array(puntosA), k = 4)
-    #IntersectionBezier()._plot(np.array(puntosB), k = 4)
-    
+
     intersection = IntersectionBezier()
     intr = intersection(np.array(puntosA),np.array(puntosB))
-    # intr = IntersectionBezier().multi_call(np.array(puntosA),np.array(puntosB))
 
     intersection.plot(k = 4)
-
-    # plt.plot([x for x,_ in intr], [y for _,y in intr], "ro")
     plt.show()
 
 if __name__ == "__main__": sys.exit(main())
