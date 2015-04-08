@@ -19,22 +19,32 @@ class Tester(object):
     def time(self, name = ""):
         r = []
         for n in self.args:
-            r.append(
-                (n,
-                timeit.timeit(stmt=lambda: self.fun(n, *self.extra_args()),
+            t = timeit.timeit(stmt=lambda: self.fun(n, *self.extra_args()),
                               setup="pass",
-                              number=self.loops),
-                 )
-            )
-            print "%s with arg %s: %f" % (name, n, r[-1][1],) 
+                              number=self.loops)
+            r.append((n, t, t / float(self.loops)))
+            print "%s with arg %s: %f -> loop %f" % (name,n, r[-1][1], r[-1][2]) 
         self.last_time = r
         self.last_name = name
         return r
 
+    def loop_time(self, *args , **kwargs):
+        r = self.time(*args , **kwargs)
+        self.last_time = [(n,k/float(self.loops),) for n,k, in r]
+
+        return self.last_time
+
     def plot(self, **kwargs):
-        return plt.plot([x for x,_ in self.last_time], 
-                        [y for _,y in self.last_time], 
+        return plt.plot([x for x,_,_ in self.last_time], 
+                        [y for _,y,_ in self.last_time], 
                         label=self.last_name, **kwargs)
+
+    def plot_loops(self, **kwargs):
+        return plt.plot([x for x,_,_ in self.last_time], 
+                        [y for _,_,y in self.last_time], 
+                        label=self.last_name, **kwargs)
+
+
 
 def bezier_tester(bezier,args = range(100,2000+1, 190), loops = 1000):
     degree = 15
