@@ -58,12 +58,11 @@ def newton_polynomial(y, tau, num_points=100, libraries=False):
         return res.sum(0)
 
     else:
-        return sc.interp1d(tau,y, kind=len(tau)-1)(t) #np.array of size num_points
-
+        return np.polyval(np.polyfit(tau,y,len(tau)-1), t)
 
 if __name__ == '__main__':
 
-    n = 10.0
+    n = 10.0 # 19.0 ?!
     tau = np.arange(n)
     x = np.random.randint(-n, n, size=n)
     num_points = 100
