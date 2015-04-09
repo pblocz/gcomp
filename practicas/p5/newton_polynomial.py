@@ -47,6 +47,12 @@ def newton_polynomial(y, tau, num_points=100, libraries=False):
     t = np.linspace(tau[0], tau[-1], num_points)
 
     if libraries == False:
+        '''
+        It uses naïve polynomial evalutation instead of horner algorithm. For
+        each t it does 2*n-1 multiplications, n-1 additions and n-1
+        subtracttions, which translates in 5 numpy calls without temporary
+        memory created and no python for loops.
+        '''
         dd = divdiff(tau,y)
         res = np.empty((len(tau), num_points))
 
