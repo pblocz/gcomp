@@ -14,6 +14,8 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.backend_bases import key_press_handler
 
+def polynomial_curve_fitting(points, knots, method, L=0, libraries=False, num_points=100): 
+    return [[0,0],[5,5]]
     
 class DrawPoints(object):
     def __init__(self, points):
@@ -21,7 +23,7 @@ class DrawPoints(object):
         self.xs = list(self.plt_points.get_xdata())
         self.ys = list(self.plt_points.get_ydata())
         self.polygon = zip(self.xs, self.ys)
-        self.plt_curve, = points.axes.plot([], [])
+        self.plt_curve, = points.axes.plot([], [], 'k')
         self.selected_point = None
         
         self.knots = 'otro'
@@ -34,19 +36,23 @@ class DrawPoints(object):
         self.cid_move = self.plt_points.figure.canvas.mpl_connect('motion_notify_event', self.move_event)
         self.cid_release = self.plt_points.figure.canvas.mpl_connect('button_release_event', self.release_event)
         self.cid_erease = self.plt_points.figure.canvas.mpl_connect('button_press_event', self.erease_event)
-    
-    def update_data(knots, method, L, libraries, num_points):
+        
+    def update_data(self, knots, method, L, libraries, num_points):
         self.knots = knots
         self.method = method
         self.L = L
         self.libraries = libraries
         self.num_points = num_points
-        
     
+    def print_data(self):
+        print self.knots, ",", self.method, ",", self.L, ",", boolean(self.libraries), ",", self.num_points
+          
     def update_curve(self):
-        #self.updatePolynom()
+        p = polynomial_curve_fitting(self.plt_points, self.knots, self.method, self.L, self.libraries, self.num_points)
+        self.plt_curve.set_data([x for x,_ in p], [y for _,y in p])
         self.plt_points.set_data(self.xs, self.ys)
         self.plt_points.figure.canvas.draw()
+        self.print_data()
     
     def new_point(self, event):
         self.xs.append(event.xdata)
@@ -127,7 +133,7 @@ def main(args=None):
         else:
             Lvalue.configure(state='disabled')
     R3=Radiobutton(method, text="Polinomio de Newton   ", variable=vm, value=True, command=check)
-    R4=Radiobutton(method, text="Minimos Cuadrados,    L=", variable=vm, value=False, command=check)
+    R4=Radiobutton(method, text="Minimos Cuadrados,    L =", variable=vm, value=False, command=check)
     R3.pack(anchor=W, side=LEFT)
     R4.pack(anchor=W, side=LEFT)
     Lvalue.pack()
@@ -153,6 +159,9 @@ def main(args=None):
     P.set("100")
     Pvalue = Entry(points, textvariable=P, width=5, justify=CENTER)
     Pvalue.pack()
+    buttons = Frame(root)
+    buttons.pack() 
+    
         
     #Se crea la grafica
     fig = Figure(figsize=(5,4), dpi=100)
@@ -170,13 +179,13 @@ def main(args=None):
     linebuilder = DrawPoints(points)
     
     #Se crea el boton para interpolar
-    def function():
+    def update():
         if vn.get() == 1:
             knots = 'chebyshev'
         else:
             knots = 'otro'
         #nk = int(Nvalue.get())
-        if vm.get():
+        if vm.get() == 0:
             method = 'least_squares'
             L = int(Lvalue.get())
         else:
@@ -184,12 +193,9 @@ def main(args=None):
             L = 0
         libraries = vl.get()
         num_points = int(Pvalue.get())
-        
         linebuilder.update_data(knots, method, L, libraries, num_points)
         linebuilder.update_curve()
-                
-        print "INTERPOLADO"
-    button = Button(root, text="INTERPOLAR", command=function)
+    button = Button(buttons, text="ACTUALIZAR DATOS", command=update)
     button.pack()
         
     root.mainloop()
