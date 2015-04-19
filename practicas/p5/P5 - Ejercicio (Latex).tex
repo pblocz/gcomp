@@ -1,0 +1,184 @@
+%% LyX 2.1.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[spanish]{article}
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage{amstext}
+\usepackage{babel}
+\addto\shorthandsspanish{\spanishdeactivate{~<>}}
+
+\begin{document}
+
+\title{\textbf{Práctica 5}}
+
+
+\author{Pablo Cabeza García y Diego González Domínguez}
+
+\maketitle
+
+\section*{Ejercicio:}
+
+\textbf{1) Si $f=gh$, demuéstrese la fórmula de Leibniz para las
+diferencias divididas:}
+
+\begin{equation}
+\left[\tau_{i},...,\tau_{i+k}\right]f=\sum{}_{r=i}^{i+k}\left(\left[\tau_{i},...,\tau_{r}\right]g\right)\text{·}\left(\left[\tau_{r},...,\tau_{i+k}\right]h\right)
+\end{equation}
+
+
+Para demostrar la fórmula anterior se utiliza inducción sobre \textit{\textcolor{black}{k}},
+de manera que para $k=1$ se tiene:
+
+\begin{equation}
+\left[\tau_{i},\tau_{i+1}\right]f=\left(\left[\tau_{i}\right]g\right)\text{·}\left(\left[\tau_{i},\tau_{i+1}\right]h\right)+\left(\left[\tau_{i},\tau_{i+1}\right]g\right)\text{·}\left(\left[\tau_{i+1}\right]h\right)
+\end{equation}
+
+
+En el paso inductivo, si se supone que \textbf{(1)} es cierto para
+$k$, y sabiendo que en $k+1$ se cumple la siguiente fórmula:
+
+\begin{equation}
+\left[\tau_{i},....,\tau_{i+k+1}\right]f=\frac{\left[\tau_{i},...,\tau_{i+k}\right]f-\left[\tau_{i+1},...,\tau_{i+k+1}\right]f}{\tau_{i}-\tau_{i+k+1}}
+\end{equation}
+
+
+se puede escribir de la siguiente forma:
+
+\[
+\left(\tau_{i}-\tau_{i+k+1}\right)\text{·}\left[\tau_{i},...,\tau_{i+k+1}\right]f=\left[\tau_{i},...,\tau_{i+k}\right]f-\left[\tau_{i+1},...,\tau_{i+k+1}\right]f=
+\]
+
+
+\[
+=\sum{}_{r=i}^{i+k}\left(\left[\tau_{i},...,\tau_{r}\right]g\right)\text{·}\left(\left[\tau_{r},...,\tau_{i+k}\right]h\right)-
+\]
+
+
+\begin{equation}
+-\sum{}_{r=i}^{i+k}\left(\left[\tau_{i+1},...,\tau_{r+1}\right]g\right)\text{·}\left(\left[\tau_{r+1},...,\tau_{i+k+1}\right]h\right)
+\end{equation}
+
+
+Por otro lado, se pueden expresar:
+
+\begin{equation}
+\left[\tau_{i+1},...,\tau_{r+1}\right]g=\left[\tau_{i},...,\tau_{r}\right]g-\left(\tau_{i}-\tau_{i+1}\right)\text{·}\left[\tau_{i},...,\tau_{r+1}\right]g
+\end{equation}
+
+
+\begin{equation}
+\left[\tau_{r+1},...,\tau_{i+k+1}\right]h=\left[\tau_{r},...,\tau_{i+k}\right]h-\left(\tau_{r}-\tau_{i+k+1}\right)\text{·}\left[\tau_{r},...,\tau_{i+k+1}\right]h
+\end{equation}
+
+
+Sustituyendo \textbf{(5)} y \textbf{(6)} en \textbf{(4)}:
+
+\[
+\left(\tau_{i}-\tau_{i+k+1}\right)\text{·}\left[\tau_{i},...,\tau_{i+k+1}\right]f=
+\]
+
+
+\[
+=\sum{}_{r=i}^{i+k}\left(\left[\tau_{i},...,\tau_{r}\right]g\right)\text{·}\left(\left[\tau_{r},...,\tau_{i+k}\right]h\right)-\sum{}_{r=i}^{i+k}\left(\left[\tau_{i},...,\tau_{r}\right]g\right)\text{·}\left(\left[\tau_{r},...,\tau_{i+k}\right]h\right)+
+\]
+
+
+\[
++\sum{}_{r=i}^{i+k}\left(\tau_{r}-\tau_{i+k+1}\right)\text{·}\left(\left[\tau_{i},...,\tau_{r}\right]g\right)\text{·}\left(\left[\tau_{r},...,\tau_{i+k+1}\right]h\right)+
+\]
+
+
+\[
++\sum{}_{r=i+1}^{i+k+1}\left(\tau_{i}-\tau_{r}\right)\text{·}\left(\left[\tau_{i},...,\tau_{r}\right]g\right)\text{·}\left(\left[\tau_{r},...,\tau_{i+k+1}\right]h\right)=
+\]
+
+
+\begin{equation}
+=\left(\tau_{i}-\tau_{i+k+1}\right)\text{·}\sum{}_{r=i}^{i+k+1}\left(\left[\tau_{i},...,\tau_{r}\right]g\right)\text{·}\left(\left[\tau_{r},...,\tau_{i+k+1}\right]h\right)
+\end{equation}
+
+
+Simplificando queda:
+
+\begin{equation}
+\left[\tau_{i},...,\tau_{i+k+1}\right]f=\sum{}_{r=i}^{i+k+1}\left(\left[\tau_{i},...,\tau_{r}\right]g\right)\text{·}\left(\left[\tau_{r},...,\tau_{i+k+1}\right]h\right)
+\end{equation}
+
+
+que es igual a \textbf{(1)} sustituyendo $k$ por $k+1$, y de esta
+manera queda demostrada la fórmula de Leibniz.
+
+
+\section*{\textit{\textcolor{white}{\normalsize{}a}}}
+
+\textbf{2) En el caso particular que $g(x)=x$ y $h(x)=1/x$:}
+
+\[
+\left[\tau_{1}\right]g=g(\tau_{i})=\tau_{i}\:\rightarrow\:\left[\tau_{1},\tau_{2}\right]g=\frac{g(\tau_{1})-g(\tau_{2})}{\tau_{1}-\tau_{2}}=\frac{\tau_{1}-\tau_{2}}{\tau_{1}-\tau_{2}}=1\:\rightarrow\:
+\]
+
+
+\[
+\:\rightarrow\:\left[\tau_{1},\tau_{2},\tau_{3}\right]g=\frac{\left[\tau_{1},\tau_{2}\right]g-\left[\tau_{2},\tau_{3}\right]g}{\tau_{1}-\tau_{3}}=\frac{1-1}{\tau_{1}-\tau_{3}}=0\:\rightarrow\:...
+\]
+
+
+\begin{equation}
+...\:\rightarrow\:\left[\tau_{1},...,\tau_{n}\right]g=0
+\end{equation}
+
+
+\[
+\left[\tau_{1}\right]h=h(\tau_{1})=\frac{1}{\tau_{1}}\:\rightarrow\:\left[\tau_{1},\tau_{2}\right]h=\frac{h(\tau_{1})-h(\tau_{2})}{\tau_{1}-\tau_{2}}=\frac{\frac{1}{\tau_{1}}-\frac{1}{\tau_{2}}}{\tau_{1}-\tau_{2}}=\frac{\frac{\tau_{2}-\tau_{1}}{\tau_{1}\text{·}\tau_{2}}}{\tau_{1}-\tau_{2}}=\frac{-1}{\tau_{1}\text{·}\tau_{2}}\:\rightarrow\:
+\]
+
+
+\[
+\:\rightarrow\:\left[\tau_{1},\tau_{2},\tau_{3}\right]h=\frac{\left[\tau_{1},\tau_{2}\right]h-\left[\tau_{2},\tau_{3}\right]h}{\tau_{1}-\tau_{3}}=\frac{\frac{-1}{\tau_{1}\text{·}\tau_{2}}-\frac{-1}{\tau_{2}\text{·}\tau_{3}}}{\tau_{1}-\tau_{3}}=\frac{\frac{-\tau_{3}+\tau_{1}}{\tau_{1}\text{·}\tau_{2}\text{·}\tau_{3}}}{\tau_{1}-\tau_{3}}=\frac{1}{\tau_{1}\text{·}\tau_{2}\text{·}\tau_{3}}\:\rightarrow\:...
+\]
+
+
+\begin{equation}
+...\:\rightarrow\:\left[\tau_{1},...,\tau_{n}\right]h=\frac{\left(-1\right)^{n-1}}{\tau_{1}\text{·}...\text{·}\tau_{n}}
+\end{equation}
+
+
+\[
+\left[\tau_{1}\right]f=f(\tau_{1})=1\:\rightarrow\:\left[\tau_{1},\tau_{2}\right]f=\frac{f(\tau_{1})-f(\tau_{2})}{\tau_{1}-\tau_{2}}=\frac{1-1}{\tau_{1}-\tau_{2}}=0\:\rightarrow\:
+\]
+
+
+\[
+\:\rightarrow\:\left[\tau_{1},\tau_{2},\tau_{3}\right]f=\frac{\left[\tau_{1},\tau_{2}\right]f-\left[\tau_{2},\tau_{3}\right]f}{\tau_{1}-\tau_{3}}=\frac{0-0}{\tau_{1}-\tau_{3}}=0\:\rightarrow\:...
+\]
+
+
+\begin{equation}
+...\:\rightarrow\:\left[\tau_{1},...,\tau_{n}\right]f=0
+\end{equation}
+
+
+Utilizando los resultados de \textbf{(9)}, \textbf{(10)} y \textbf{(11)}
+se comprueba que se cumple \textbf{(1)} para $f(x)=1$, $g(x)=x$
+y $h(x)=1/x$:
+
+\begin{equation}
+\left[\tau_{1}\right]f=\left(\left[\tau_{1}\right]g\right)\text{·}\left(\left[\tau_{1}\right]h\right)=g(\tau_{1})\text{·}h(\tau_{1})=\tau_{1}\text{·}\frac{1}{\tau_{1}}=1=f(\tau_{1})=\left[\tau_{1}\right]f
+\end{equation}
+
+
+\[
+\left[\tau_{1},...,\tau_{n}\right]f=\sum{}_{r=1}^{n}\left(\left[\tau_{1},...,\tau_{r}\right]g\right)\text{·}\left(\left[\tau_{r},...,\tau_{n}\right]h\right)=
+\]
+
+
+\[
+=\tau_{1}\text{·}\frac{\left(-1\right)^{n-1}}{\tau_{1}\text{·...·}\tau_{n}}+1\text{·}\frac{\left(-1\right)^{n-2}}{\tau_{2}\text{·...·}\tau_{n}}+0+...+0=
+\]
+
+
+\begin{equation}
+=\frac{1-1}{\tau_{2}\text{·...·}\tau_{n}}=0=\left[\tau_{1},...,\tau_{n}\right]f\quad\forall n\geq2
+\end{equation}
+
+\end{document}
