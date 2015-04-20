@@ -111,4 +111,4 @@ if __name__ == '__main__':
     #test_least_squares_fitting_regularized()
     #test_newton_poly_cheb()
     test_newton_poly()
-    #timing_curve_fitting()
+    timing_curve_fitting()
