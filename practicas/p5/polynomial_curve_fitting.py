@@ -2,18 +2,16 @@
 # -*- encoding: utf-8 -*-
 
 '''
+Different implementations for interpolating polynomials.
+
 authors: Pablo Cabeza & Diego González
+date: 20/04/2015 
 '''
 
 import numpy as np
 import scipy.interpolate as sc
 import matplotlib.pyplot as plt
 import numpy.linalg as lalg
-
-import logging
-
-# logger = logging.
-
 
 def polynomial_curve_fitting(points, knots, method, num_points=100, libraries=False, L=0, degree=None): # L=0, libraries=False, num_points=100):    
     '''
@@ -48,6 +46,7 @@ def polynomial_curve_fitting(points, knots, method, num_points=100, libraries=Fa
     elif method == "least_squares": 
       return least_squares_fitting(points, knots, degree or (len(knots) - 1), num_points,  L, libraries)
 
+
 def divdifnd(y,tau):
   "Compute divided differences for y of dimension (n,m), m > 1"
 
@@ -69,6 +68,11 @@ def newton_polynomialnd(y,tau, num_points, out = None):
     subtracttions, which translates into 5 numpy calls with no python 
     for-loops.
 
+    arguments:
+      - out: numpy.array of dimension (num_points, y.shape[1]) to fill or none
+
+    return: a reference to out if given, or a new numpy.array with the result
+
     It runs in (except for divdifnd()):
 
         O(n*p) operations inside numpy
@@ -81,10 +85,12 @@ def newton_polynomialnd(y,tau, num_points, out = None):
 
     dd = divdifnd(y,tau)
 
+    # prepare `res` to hold `res[i+1] = (t - tau[0])*...*(t-tau[i])`
     res = np.empty((len(tau), num_points)); res[0].fill(1) # i = 0 -> base case
     tau_a = np.subtract(t, tau[:-1][None].T, res[1:]) # tau_a[i] = res[i+1] = t - tau[i] 
     np.multiply.accumulate(tau_a, out = tau_a) # tau_a[i] = mult[j=0,i](t - tau[j])
     
+    # For each column of points, use precomputed res to get the evaluation in `t`
     aux = np.empty_like(res)
     for i in xrange(dd.shape[1]):
       np.multiply(res, dd[:,i][None].T, out = aux) # res[i] = tau_a[i]*dd[i] = factor i of the newton polynomial
@@ -115,7 +121,26 @@ def newton_polynomial(y, tau, num_points=100, libraries=False):
       return np.vstack([np.polyval(fit[:,i],t) for i in xrange(fit.shape[1])]).T
 
 
-def least_squares_fitting(points, knots, degree, num_points, L=0, libraries=True):    
+def least_squares_fitting(points, knots, degree, num_points, L=0, libraries=True):
+    '''
+    Computes the interpolating curve given by the polynomial of the given degree.
+
+    arguments:
+      - points: numpy array of size n; points to interpolate
+      - knots: ordered numpy array of size n
+      - num_points: number of points at which the polynomial will be evaluated
+      - degree: the degree of the polynomial
+
+    keyword arguments:
+      - libraries: False means only linear algebra can be used
+               True means every module can be used.
+      - L: the correction parameter to avoid overfeeting in the polynomial
+
+    returns:
+       numpy array of size num_points given by the polynomial 
+       evaluated at np.linspace(knots[0], knots[-1], num_points)
+    '''
+
     t = np.linspace(knots[0], knots[-1], num_points)
 
     if libraries == False:
@@ -127,13 +152,13 @@ def least_squares_fitting(points, knots, degree, num_points, L=0, libraries=True
       H = np.dot(C,C.T)+ L/2.0 * np.identity(degree+1)
       a = np.dot(np.dot(lalg.inv(H),C),points)
 
-      # Eval polynomial in `t`, using fast numpy operations with memory tradeoff
+      # Eval polynomial in `t`, using fast numpy operations and O(n*p) memory
       T = np.tile(t,(degree+1,1)); T[0].fill(1)
       np.multiply.accumulate(T[1:], out = T[1:])
       return np.dot(T.T, a)
 
     else: 
-      C = np.vander(knots, int(degree) + 1)[:,::-1] # Slower than our computing
+      C = np.vander(knots, int(degree) + 1)[:,::-1] # Slower than our computing, left because is clearer
 
       H = np.dot(C.T,C)+ L/2.0 * np.identity(degree+1)
       fit = np.linalg.lstsq(H,np.dot(C.T,points))[0][::-1]
@@ -143,7 +168,7 @@ def least_squares_fitting(points, knots, degree, num_points, L=0, libraries=True
 
 def chebyshev_knots(a, b, n):
   '''
-  Computes n chebyshev_knots in the interval [a,b]
+  Computes `n` chebyshev_knots in the interval `[a,b]`
 
   returns: numpy.array of the nodes
   '''
@@ -168,7 +193,6 @@ if __name__ == '__main__':
     plt.plot(x[:,0],x[:,1], 'o')
 
     plt.show()
-    
     
     import timeit
 

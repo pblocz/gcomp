@@ -198,7 +198,7 @@ def main(args=None):
         #nk = int(Nvalue.get())
         if vm.get() == 0:
             method = 'least_squares'
-            L = int(Lvalue.get())
+            L = float(Lvalue.get())
             degree = int(Dvalue.get())
         else:
             method = 'newton'
@@ -212,9 +212,11 @@ def main(args=None):
     button.pack()
     
     #Se añade un pequeño tutorial:
-    T = Text(root, height = 10)
+    T = Text(root, height = 3)
     T.pack()
-    T.insert(END, "INSTRUCTIONS: Para introducir el polinomio, se presiona con el botón izquierdo del ratón sobre el punto que se desee añadir.")
+    T.insert(END, 
+        '''INSTRUCTIONS: Left click to introduce points and find the interpolation curve. You can drag points to move them or right click to erase them. Configure above options to see different curves.'''
+    )
         
     root.mainloop()
 
