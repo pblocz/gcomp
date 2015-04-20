@@ -13,10 +13,8 @@ from ttk import *
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.backend_bases import key_press_handler
-
-def polynomial_curve_fitting(points, knots, method, L=0, libraries=False, num_points=100): 
-    return [[0,0],[5,5]]
-    
+from polynomial_curve_fitting import polynomial_curve_fitting
+  
 class DrawPoints(object):
     def __init__(self, points):
         self.plt_points = points
@@ -31,25 +29,27 @@ class DrawPoints(object):
         self.L = 0
         self.libraries = False
         self.num_points = 100
+        self.degree = None
         
         self.cid_press = self.plt_points.figure.canvas.mpl_connect('button_press_event', self.press_event)
         self.cid_move = self.plt_points.figure.canvas.mpl_connect('motion_notify_event', self.move_event)
         self.cid_release = self.plt_points.figure.canvas.mpl_connect('button_release_event', self.release_event)
         self.cid_erease = self.plt_points.figure.canvas.mpl_connect('button_press_event', self.erease_event)
         
-    def update_data(self, knots, method, L, libraries, num_points):
+    def update_data(self, knots, method, L, libraries, num_points, degree):
         self.knots = knots
         self.method = method
         self.L = L
         self.libraries = libraries
         self.num_points = num_points
+        self.degree = degree
     
     def print_data(self):
-        print self.knots, ",", self.method, ",", self.L, ",", boolean(self.libraries), ",", self.num_points
+        print self.knots, ",", self.method, ",", self.L, ",", self.libraries, ",", self.num_points, ",", self.degree  
           
     def update_curve(self):
-        p = polynomial_curve_fitting(self.plt_points, self.knots, self.method, self.L, self.libraries, self.num_points)
-        self.plt_curve.set_data([x for x,_ in p], [y for _,y in p])
+        p = polynomial_curve_fitting(self.plt_points, self.knots, self.method, self.num_points, libraries=self.libraries, L=self.L, degree=self.degree)
+        self.plt_curve.set_data(p[:,0],p[:,1])
         self.plt_points.set_data(self.xs, self.ys)
         self.plt_points.figure.canvas.draw()
         self.print_data()
@@ -99,7 +99,7 @@ def main(args=None):
     
     #Se crea la ventana
     root = Tk()
-    root.title("Intersección de curvas de Bezier")
+    root.title("Polynomial Curve Fitting")
     
     #Se crea la zona para seleccionar los nodos
     knots = Frame(root)
@@ -111,7 +111,7 @@ def main(args=None):
     #N = StringVar()
     #N.set("10")
     R1=Radiobutton(knots, text="Chebychev   ", variable=vn, value=True)
-    R2=Radiobutton(knots, text="Otro    ", variable=vn, value=False)
+    R2=Radiobutton(knots, text="Other    ", variable=vn, value=False)
     #Nvalue = Entry(knots, textvariable=N, width=3, justify=CENTER)
     R1.pack(anchor=W, side=LEFT)
     R2.pack(anchor=W, side=LEFT)
@@ -127,26 +127,34 @@ def main(args=None):
     L = StringVar()
     L.set("0")
     Lvalue = Entry(method, textvariable=L, width=3, justify=CENTER, state='disabled')
+    D = StringVar()
+    D.set("0")
+    Dvalue = Entry(method, textvariable=D, width=3, justify=CENTER, state='disabled')
     def check():
         if vm.get() == 0:
             Lvalue.configure(state='normal')
+            Dvalue.configure(state='normal')
         else:
             Lvalue.configure(state='disabled')
-    R3=Radiobutton(method, text="Polinomio de Newton   ", variable=vm, value=True, command=check)
-    R4=Radiobutton(method, text="Minimos Cuadrados,    L =", variable=vm, value=False, command=check)
+            Dvalue.configure(state='disabled')
+    R3=Radiobutton(method, text="Newton Polynomial   ", variable=vm, value=True, command=check)
+    R4=Radiobutton(method, text="Least Square Fitting,    L =", variable=vm, value=False, command=check)
     R3.pack(anchor=W, side=LEFT)
     R4.pack(anchor=W, side=LEFT)
-    Lvalue.pack()
+    Lvalue.pack(side=LEFT)
+    mlabel2 = Label(method, text="  degree =")
+    mlabel2.pack(side=LEFT)
+    Dvalue.pack(side=LEFT)
     
     #Se crea la zona para seleccionar si se usan librerias o no
     library = Frame(root)
     library.pack(anchor=W) 
-    llabel = Label(library, text="LIBRARY:              ")
+    llabel = Label(library, text="LIBRARIES:           ")
     llabel.pack(side=LEFT, padx=2, pady=2)
     vl = BooleanVar()
     vl.set(False)
-    R5=Radiobutton(library, text="SIN librerias   ", variable=vl, value=False, command=check)
-    R6=Radiobutton(library, text="CON librerias", variable=vl, value=True, command=check)
+    R5=Radiobutton(library, text="FALSE   ", variable=vl, value=False, command=check)
+    R6=Radiobutton(library, text="TRUE", variable=vl, value=True, command=check)
     R5.pack(anchor=W, side=LEFT)
     R6.pack(anchor=W, side=LEFT)
     
@@ -188,15 +196,21 @@ def main(args=None):
         if vm.get() == 0:
             method = 'least_squares'
             L = int(Lvalue.get())
+            degree = int(Dvalue.get())
         else:
             method = 'newton'
             L = 0
+            degree = None
         libraries = vl.get()
         num_points = int(Pvalue.get())
-        linebuilder.update_data(knots, method, L, libraries, num_points)
+        linebuilder.update_data(knots, method, L, libraries, num_points, degree)
         linebuilder.update_curve()
-    button = Button(buttons, text="ACTUALIZAR DATOS", command=update)
+    button = Button(buttons, text="UPDATE", command=update)
     button.pack()
+    
+    #Se añade un pequeño tutorial:
+    label1 = Label(root, text="INSTRUCTIONS: Para introducir el polinomio, se presiona con el botón izqierdo del ratón sobre el pinto que se desee añadir.")
+    label1.pack(side=LEFT, padx=2, pady=2)
         
     root.mainloop()
 
