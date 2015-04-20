@@ -142,7 +142,7 @@ def newton_polynomial1d(y,tau, num_points, out = None):
 
     return res.sum(0, out = out) # sum of factors
 
-def newton_polynomial(y, tau, num_points=100, libraries=False):
+def newton_polynomial(y, tau, num_points=100, libraries=False, *args, **kwargs):
     '''
     Computes de Newton's polynomial interpolating values x at knots tau
     y: numpy array of size n; points to interpolate
@@ -177,11 +177,12 @@ def newton_polynomial(y, tau, num_points=100, libraries=False):
         return np.vstack([np.polyval(fit[:,i],t) for i in [0,1]]).T
 
 
-def least_squares_fitting(points, knots, degree, num_points, L=0, libraries=True):    
+def least_squares_fitting(points, knots, degree, num_points, L=0, libraries=True, *args, **kwargs):    
     #I've used np.linalg.lstsq and np.polyval if libraries==True
     t = np.linspace(knots[0], knots[-1], num_points)
 
     if libraries == False:
+      # Compute vardemond matrix transposed (fast)
       C = np.tile(knots,(degree+1,1)); C[0].fill(1)
       np.multiply.accumulate(C[1:], out = C[1:])
 
