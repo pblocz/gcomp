@@ -186,6 +186,10 @@ def least_squares_fitting(points, knots, degree, num_points, L=0, libraries=True
       C = np.tile(knots,(degree+1,1)); C[0].fill(1)
       np.multiply.accumulate(C[1:], out = C[1:])
 
+      #H = np.dot(C,C.T); np.add(H, np.multiply(L/2.0, np.identity(degree + 1)), out = H)
+      #H[np.diag_indices_from(H)]+= L/2.0
+
+
       H = np.dot(C,C.T)+ L/2.0 * np.identity(degree+1)
       a = np.dot(np.dot(lalg.inv(H),C),points)
 
@@ -208,7 +212,7 @@ if __name__ == '__main__':
     x = np.vstack((tau,np.random.randint(-n, n, size=n))).T
     num_points = 100
 
-    poly_1 = least_squares_fitting(x, tau, n-1, num_points,L=0,libraries = True)
+    poly_1 = least_squares_fitting(x, tau, n-1, num_points,L=0,libraries = False)
     #poly_1 = newton_polynomial(x, tau, num_points, libraries=True)
     poly_0 = newton_polynomial(x, tau, num_points, libraries=False)
     print np.linalg.norm(poly_0 - poly_1)
