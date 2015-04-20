@@ -214,7 +214,7 @@ if __name__ == '__main__':
 
     poly_1 = least_squares_fitting(x, tau, n-1, num_points,L=0,libraries = False)
     #poly_1 = newton_polynomial(x, tau, num_points, libraries=True)
-    poly_0 = newton_polynomial(x, tau, num_points, libraries=False)
+    poly_0 = newton_polynomial(x, tau, num_points, libraries=False, L=0)
     print np.linalg.norm(poly_0 - poly_1)
     
     t = np.linspace(tau[0], tau[-1], num_points)  
