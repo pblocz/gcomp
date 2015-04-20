@@ -193,16 +193,10 @@ def least_squares_fitting(points, knots, degree, num_points, L=0, libraries=True
       return np.dot(T.T, a)
 
     else: 
-      H_ = least_squares_fitting(points,knots, degree, num_points, L, False)
-      # C = np.tile(knots,(degree+1,1)); C[0].fill(1)
-      # np.multiply.accumulate(C[1:], out = C[1:])
-      # C = C.T
       C = np.vander(knots, int(degree) + 1)[:,::-1]
 
       H = np.dot(C.T,C)+ L/2.0 * np.identity(degree+1)
-      Ct_b = np.dot(C.T,points)
-      fit = np.linalg.lstsq(H,Ct_b)[0]
-
+      fit = np.linalg.lstsq(H,np.dot(C.T,points))[0][::-1]
 
       return np.vstack([np.polyval(fit[:,i],t) for i in [0,1]]).T
 
