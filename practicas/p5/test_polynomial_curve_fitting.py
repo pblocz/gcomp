@@ -89,26 +89,26 @@ n=10
 knots = np.linspace(0, 1, n)
 num_points = 200
     '''
-    print 'newton:', min(timeit.repeat("x = np.random.randint(-10, 10, size=(n, 2));\
-        polynomial_curve_fitting(x, knots, method='newton',\
-        libraries=False, num_points=num_points)", setup=setup, number=10000))
+    # print 'newton:', min(timeit.repeat("x = np.random.randint(-10, 10, size=(n, 2));\
+    #     polynomial_curve_fitting(x, knots, method='newton',\
+    #     libraries=False, num_points=num_points)", setup=setup, number=10000))
         
-    print 'newton_libraries:', min(timeit.repeat("x = np.random.randint(-10, 10, size=(n, 2));\
-        polynomial_curve_fitting(x, knots, method='newton',\
-        libraries=False, num_points=num_points)", setup=setup, number=10000))
+    # print 'newton_libraries:', min(timeit.repeat("x = np.random.randint(-10, 10, size=(n, 2));\
+    #     polynomial_curve_fitting(x, knots, method='newton',\
+    #     libraries=False, num_points=num_points)", setup=setup, number=10000))
         
     print 'least_squares:', min(timeit.repeat("x = np.random.randint(-10, 10, size=(n, 2));\
         polynomial_curve_fitting(x, knots, method='least_squares',\
         libraries=False, num_points=num_points, L=1e-10)", setup=setup, number=10000))
 
-    print 'least_squares_libraries:', min(timeit.repeat("x = np.random.randint(-10, 10, size=(n, 2));\
-        polynomial_curve_fitting(x, knots, method='least_squares',\
-        libraries=True, num_points=num_points, L=1e-10)", setup=setup, number=10000))
+    # print 'least_squares_libraries:', min(timeit.repeat("x = np.random.randint(-10, 10, size=(n, 2));\
+    #     polynomial_curve_fitting(x, knots, method='least_squares',\
+    #     libraries=True, num_points=num_points, L=1e-10)", setup=setup, number=10000))
 
 if __name__ == '__main__':
     
-    #test_least_squares_fitting()
-    #test_least_squares_fitting_regularized()
+    # test_least_squares_fitting()
+    # test_least_squares_fitting_regularized()
     #test_newton_poly_cheb()
-    test_newton_poly()
+    #test_newton_poly()
     timing_curve_fitting()
