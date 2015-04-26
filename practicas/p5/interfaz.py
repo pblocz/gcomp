@@ -42,21 +42,27 @@ class DrawPoints(object):
         self.L = L
         self.libraries = libraries
         self.num_points = num_points
-        self.degree = degree
+        self.degree = degree if degree != 0 else None
     
     def print_data(self):
         print self.knots, ",", self.method, ",", self.L, ",", self.libraries, ",", self.num_points, ",", self.degree  
           
     def update_curve(self):
+<<<<<<< HEAD
         if self.knots == 'otros': 
             knots = np.linespace(0,1,len(self.polygon))
         else:
             knots = self.knots
+=======
+        if self.knots == "otro": knots = np.linspace(0,1,len(self.polygon)) 
+        else: knots = self.knots
+
+>>>>>>> f2d9888bbe688006b78b7a12ec4ba19a10de1850
         p = polynomial_curve_fitting(np.array(self.polygon), knots, self.method, self.num_points, libraries=self.libraries, L=self.L, degree=self.degree)
         self.plt_curve.set_data(p[:,0],p[:,1])
         self.plt_points.set_data(self.xs, self.ys)
         self.plt_points.figure.canvas.draw()
-        self.print_data()
+        # self.print_data()
     
     def new_point(self, event):
         self.xs.append(event.xdata)
@@ -199,7 +205,7 @@ def main(args=None):
         #nk = int(Nvalue.get())
         if vm.get() == 0:
             method = 'least_squares'
-            L = int(Lvalue.get())
+            L = float(Lvalue.get())
             degree = int(Dvalue.get())
         else:
             method = 'newton'
@@ -213,9 +219,17 @@ def main(args=None):
     button.pack()
     
     #Se añade un pequeño tutorial:
+<<<<<<< HEAD
     T = Text(root, height=10, width=60)
     T.pack()
     T.insert(END, "INSTRUCTIONS: Para introducir el polinomio, se presiona con el botón izquierdo del ratón sobre el punto que se desee añadir.")
+=======
+    T = Text(root, height = 3)
+    T.pack()
+    T.insert(END, 
+        '''INSTRUCTIONS: Left click to introduce points and find the interpolation curve. You can drag points to move them or right click to erase them. Configure above options to see different curves.'''
+    )
+>>>>>>> f2d9888bbe688006b78b7a12ec4ba19a10de1850
         
     root.mainloop()
 
