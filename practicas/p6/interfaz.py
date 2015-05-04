@@ -29,7 +29,7 @@ class DrawPoints(object):
         self.xi = []
         self.k = 1
         self.nu = []
-        self.A = []
+        self.A = self.plt_points
         self.num_dots = 100
         
         self.cid_press = self.plt_points.figure.canvas.mpl_connect('button_press_event', self.press_event)
@@ -43,12 +43,16 @@ class DrawPoints(object):
         self.xi = xi
         self.k = k
         self.nu = nu
-        self.A = self.plt_points
         self.num_dots = 100
               
     def update_curve(self):
-        p = spline2d(self.a, self.b, self.xi, self.k, self.nu, self.A, self.num_dots)
+        p = spline2d(self.a, self.b, self.xi, self.k, self.nu, self.plt_points, self.num_dots)
         self.plt_curve.set_data(p[:,0],p[:,1])
+        self.plt_points.set_data(self.xs, self.ys)
+        self.plt_points.figure.canvas.draw()
+        
+    def update_curve2(self):
+        self.plt_curve = []
         self.plt_points.set_data(self.xs, self.ys)
         self.plt_points.figure.canvas.draw()
     
@@ -56,7 +60,7 @@ class DrawPoints(object):
         self.xs.append(event.xdata)
         self.ys.append(event.ydata)
         self.polygon.append([event.xdata,event.ydata])
-        self.update_curve()
+        self.update_curve2()
          
     def press_event(self, event):
         if event.inaxes != self.plt_points.axes or event.button != 1: 
@@ -66,7 +70,6 @@ class DrawPoints(object):
             self.new_point(event)
         else:
             self.selected_point = indices['ind'][0]
-            # print self.selected_point
             
     def move_event(self, event): 
         if event.inaxes != self.plt_points.axes or self.selected_point is None:
@@ -90,7 +93,7 @@ class DrawPoints(object):
             del self.xs[index]
             del self.ys[index]
             del self.polygon[index]
-            self.update_curve() 
+            self.update_curve2() 
 
 def main(args=None):
     args = args or sys.argv
@@ -108,13 +111,13 @@ def main(args=None):
     La.set("0")
     Lavalue = Entry(knots, textvariable=La, width=3, justify=CENTER)
     Lavalue.pack(side=LEFT)
-    blabel = Label(knots, text="    b: ")
+    blabel = Label(knots, text="        b: ")
     blabel.pack(side=LEFT, padx=2, pady=2)
     Lb = StringVar()
     Lb.set("1")
     Lbvalue = Entry(knots, textvariable=Lb, width=3, justify=CENTER)
     Lbvalue.pack(side=LEFT)
-    xilabel = Label(knots, text="    List of breakpoints: ")
+    xilabel = Label(knots, text="        Breakpoints (floats separated by spaces: ")
     xilabel.pack(side=LEFT, padx=2, pady=2)
     Lxi = StringVar()
     Lxi.set("")
@@ -127,14 +130,14 @@ def main(args=None):
     klabel = Label(order, text="Order of the curve: ")
     klabel.pack(side=LEFT, padx=2, pady=2)
     Lk = StringVar()
-    Lk.set("2")
+    Lk.set("1")
     Lkvalue = Entry(order, textvariable=Lk, width=3, justify=CENTER)
     Lkvalue.pack(side=LEFT)
     
     #Se crea la zona para seleccionar el numero de condiciones
     smooth = Frame(root)
     smooth.pack(anchor=W) 
-    nulabel = Label(smooth, text="Number of smoothness conditions: ")
+    nulabel = Label(smooth, text="Number of smoothness conditions (integers separated by spaces): ")
     nulabel.pack(side=LEFT, padx=2, pady=2)
     Lnu = StringVar()
     Lnu.set("")
@@ -172,20 +175,20 @@ def main(args=None):
     def update():
         a = float(Lavalue.get())
         b = float(Lbvalue.get())
-        xi = np.fromstring(Lxivalue.get(),dtype=float, sep=',')
+        xi = np.fromstring(Lxivalue.get(),dtype=float, sep=' ')
         k = int(Lkvalue.get())
-        nu = np.fromstring(Lnuvalue.get(),dtype=float, sep=',')
+        nu = np.fromstring(Lnuvalue.get(),dtype=int, sep=' ')
         num_dots = int(Pvalue.get())
         linebuilder.update_data(a, b, xi, k, nu, num_dots)
-        print a, b, xi, k, nu, num_dots
-        #linebuilder.update_curve()
-    button = Button(buttons, text="UPDATE", command=update)
+        #print a, b, xi, k, nu, num_dots
+        linebuilder.update_curve()
+    button = Button(buttons, text="NEW SPLINE CURVE", command=update)
     button.pack()
     
     #Se añade un pequeño tutorial:
     Ti = Text(root, height=4, width=50)
     Ti.pack()
-    Ti.insert(END, '''INSTRUCTIONS:  Left click to introduce points and find the plane spline curve. You can drag points  to move them or right click to erase them. Configure above options to see different curves.''')
+    Ti.insert(END, '''INSTRUCTIONS: Left click to introduce points and  drag to move them or right click to erase them. Tofind the plane spline curve, configure above      options and pulse the button.''')
     
     root.mainloop()
 

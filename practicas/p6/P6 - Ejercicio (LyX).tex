@@ -1,0 +1,134 @@
+%% LyX 2.1.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[spanish]{article}
+\usepackage[T1]{fontenc}
+\usepackage{color}
+\usepackage{amstext}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{babel}
+
+
+\makeatother
+
+\usepackage{babel}
+\addto\shorthandsspanish{\spanishdeactivate{~<>}}
+
+\begin{document}
+
+\title{\textbf{Práctica 5}}
+
+
+\author{Pablo Cabeza García y Diego González Domínguez}
+
+\maketitle
+
+\section*{Ejercicio:}
+
+\textbf{a) Dada la secuencia de nodos t = Z, calcúlense las funciones
+B-spline }$B_{i,k}$ \textbf{correspondientes:}
+
+Si t = Z, entonces $t_{i}=i$, por lo que la expresión de los $B_{i,k}$
+es:
+
+\begin{equation}
+B_{i,1}(t)=\left\lbrace \begin{array}{lc}
+1 & ,\:i\leq t<i+1\\
+0 & ,\:en\:otro\:caso
+\end{array}\right.
+\end{equation}
+
+
+\begin{equation}
+B_{i,k}(t)=\frac{t-i}{k-1}B_{i,k-1}(t)+\frac{i+k-t}{k-1}B_{i+1,k-1}(t)
+\end{equation}
+
+
+es decir, $B_{i,k}(t)$ es distinta de cero en $i\leq t<i+k$
+
+Además, se observa que $B_{i,1}(t)=B_{0,1}(t-i)$, por lo que recursivamente
+se tiene que $B_{i,k}(t)=B_{0,k}(t-i)$, de manera que:
+
+\begin{equation}
+B_{i,k}(t)=\frac{t-i}{k-1}B_{0,k-1}(t-i)+\frac{i+k-t}{k-1}B_{0,k-1}(t-i-1)
+\end{equation}
+
+
+Por lo que para obtener los $B_{0,k}(t)$ solo se necesita calcular
+previamente los $B_{0,j}(t)$ para $j\epsilon\left\{ 1,2,...,k-1\right\} $,
+ahorrando mucho trabajo y tiempo. Un ejemplo, para j = 1, 2 y 3:
+
+$B_{0,1}(t)=\left\lbrace \begin{array}{lc}
+1 & ,\:0\leq t<1\\
+0 & ,\:en\:otro\:caso
+\end{array}\right.$
+
+$B_{0,2}(t)=t\text{·}B_{0,1}(t)\mathbf{+}\left(2-t\right)\text{·}B_{1,1}(t)=t\text{·}B_{0,1}(t)\mathbf{+}\left(2-t\right)\text{·}B_{0,1}(t-1)=$
+
+$\qquad=t\text{·}\left\lbrace \begin{array}{lc}
+1 & ,\:0\leq t<1\\
+0 & ,\:en\:otro\:caso
+\end{array}\right.+\left(2-t\right)\text{·}\left\lbrace \begin{array}{lc}
+1 & ,\:1\leq t<2\\
+0 & ,\:en\:otro\:caso
+\end{array}\right.=\left\lbrace \begin{array}{lc}
+t & ,\:0\leq t<1\\
+2-t & ,\:1\leq t<2\\
+0 & ,\:en\:otro\:caso
+\end{array}\right.$
+
+$B_{0,3}(t)=\frac{t}{2}\text{·}B_{0,2}(t)\mathbf{+}\frac{3-t}{2}\text{·}B_{1,2}(t)=\frac{t}{2}\text{·}B_{0,2}(t)\mathbf{+}\frac{3-t}{2}\text{·}B_{0,2}(t-1)=$
+
+$\qquad=\frac{t}{2}\text{·}\left\lbrace \begin{array}{lc}
+t & ,\:0\leq t<1\\
+2-t & ,\:1\leq t<2\\
+0 & ,\:en\:otro\:caso
+\end{array}\right.+\frac{3-t}{2}\text{·}\left\lbrace \begin{array}{lc}
+t-1 & ,\:1\leq t<2\\
+3-t & ,\:2\leq t<3\\
+0 & ,\:en\:otro\:caso
+\end{array}\right.=\left\lbrace \begin{array}{lc}
+\frac{t^{2}}{2} & ,\:0\leq t<1\\
+\frac{-2t^{2}+6t-3}{2} & ,\:1\leq t<2\\
+\frac{(3-t)^{2}}{2} & ,\:2\leq t<3\\
+0 & ,\:en\:otro\:caso
+\end{array}\right.$
+
+$\vdots$
+
+
+\section*{\textit{\textcolor{white}{\normalsize{}{}}}}
+
+\textbf{b) Dada una secuencia de nodos arbitraria t, demuéstrese que
+si $p$ es un polinomio de grado 1, entonces $p(t)=\sum B_{ik}\text{·}p(t_{i}^{*})$,
+siendo $t_{i}^{*}=\left(t_{i+1}+...+t_{i+k-1}\right)/\left(k-1\right)$:}
+
+Por la identidad de Marsden, tenemos que:
+
+\begin{equation}
+\frac{(x-t)^{k-1}}{(k-1)!}=\sum_{i=1}\psi_{i}(x)\text{·}B_{i,k}(t)
+\end{equation}
+
+
+con $\psi_{i}(x)=\frac{(x-t_{i+1})\text{·...·}(x-t_{i+k-1})}{(k-1)!}$.
+
+Derivando \textbf{(4)} $s-1$ veces respecto a $x$, se obtiene el
+siguiente polinomio:
+
+\begin{equation}
+p(t)=\frac{(x-t)^{k-s}}{(k-s)!}=\sum_{i=1}\psi_{i}^{(s-1)}(x)\text{·}B_{i,k}(t)
+\end{equation}
+
+
+Como el enunciado nos dice que p tiene grado 1, eso quiere decir que
+$s=k-1$:
+
+\begin{equation}
+p(t)=x-t=\sum_{i=1}\left(x-\frac{t_{i+1}+...+t_{i+k-1}}{k-1}\right)\text{·}B_{i,k}(t)=\sum_{i=1}p(t_{i}^{*})\text{·}B_{i,k}(t)
+\end{equation}
+
+
+Esto tambien sería aplicable si $p(t)$ fuera de la forma $p(t)=a\text{·}t+b$,
+por lo que queda demostrado.
+\end{document}
