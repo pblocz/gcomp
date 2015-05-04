@@ -1,35 +1,23 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-IF = 0
 
 def boor_coef(i, r, k, knots, t):
-    global IF
-    # print IF*'\t', "w:: i, r, k::", i,r, k
     denom = float(knots[i + k + 1 - r] - knots[i])
     if denom == 0: return 0
     return (t - knots[i]) / denom
 
 
 def boor_step(i, r, k, knots, points, t):
-    global IF
-    # print IF*'\t', "i, r, k::", i, r, k
     if r == 0:
-        ret = np.empty_like(t); ret.fill(points[i])
-        # print IF*'\t',"result::", ret
+        ret = np.empty_like(t); ret.fill(points[i+1])
         return ret
 
-    IF+=1
     coef = boor_coef(i, r, k, knots, t)
-    IF-=1
-    # print coef
-    IF += 1
     boor1 = boor_step(i - 1, r - 1, k, knots, points, t)
     boor2 = boor_step(i, r - 1, k, knots, points, t)
-    IF -= 1
     res = (1 - coef) * boor1 +\
             coef * boor2
-    # print IF*'\t',"result::", res
     return res
 
 
@@ -53,6 +41,10 @@ def spline2d(a, b, psi, k, nu, A, num_dots):
     Returns:
     the spline curve as a numpy array of size (2, num_dots)
     '''
+    psi = np.array(psi, dtype = 'f')
+    nu = np.array(nu, dtype = 'f')
+    A = np.array(A, dtype = 'f')
+
 
     t = np.linspace(a, b, num_dots)
 
@@ -72,28 +64,20 @@ def spline2d(a, b, psi, k, nu, A, num_dots):
         idx += off
 
 
-    # print "m, n, k", len(knots), len(A), k, "::", len(knots), "==", len(A)+k+1
-
     ret1, ret2, N = [], [], len(knots)
     for l in xrange(N):  # calculamos a_j^{k-1}
         if l == N - 1: break
 
 
-        cond = (t >= knots[l]) & (t < knots[l+1]) #\
-            # ((t <= knots[l+1]) if l == N - 2 else (t < knots[l+1]))
+        cond = (t >= knots[l]) & \
+            ((t <= knots[l+1]) if l == N - k else (t < knots[l+1]))
         eval_points = t[cond]
 
-        # print "eval_points::", eval_points
-        # print "l, knots[l], knots[l+1]::", l, knots[l], knots[l+1]
         if len(eval_points) == 0: continue
 
-        IF=0
         ret1.append(boor_step(l, k - 1, k - 1, knots, A[:,0], eval_points))
-        IF=0
         ret2.append(boor_step(l, k - 1, k - 1, knots, A[:,1], eval_points))
 
-    print t
-    print [np.concatenate(ret1), np.concatenate(ret2)]
     return np.array([np.concatenate(ret1), np.concatenate(ret2)]).T
 
 if __name__ == "__main__":
@@ -108,10 +92,10 @@ if __name__ == "__main__":
 
     a = 0
     b = 4
-    xi = np.array([1, 2, 3])
-    nu = np.array([2, 2, 2])
+    xi = [1, 2, 3]
+    nu = [2, 2, 2]
     k = 3
-    A = np.array([[-3, 3], [-3, 3], [-3, 3], [8, 2], [-4, 8], [0, 8], [-1, 0], [-1, 0], [-1, 0]])
+    A = [[-3, 3], [-3, 3], [-3, 3], [8, 2], [-4, 8], [0, 8], [-1, 0], [-1, 0], [-1, 0]]
     num_points = 100
 
     '''
@@ -126,6 +110,6 @@ if __name__ == "__main__":
     '''
 
     r = spline2d(a, b, xi, k, nu, A, num_points)
-    plt.plot(A[:,0], A[:,1], 'ro-')
+    # plt.plot(A[:,0], A[:,1], 'ro-')
     plt.plot(r[:,0],r[:,1], 'b')
     plt.show()
