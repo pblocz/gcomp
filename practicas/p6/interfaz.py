@@ -24,29 +24,31 @@ class DrawPoints(object):
         self.plt_curve, = points.axes.plot([], [], 'k')
         self.selected_point = None
         
-        self.knots = 'otro'
-        self.method = 'newton'
-        self.L = 0
-        self.libraries = False
-        self.num_points = 100
-        self.degree = None
+        self.a = 0
+        self.b = 1
+        self.xi = []
+        self.k = 1
+        self.nu = []
+        self.A = []
+        self.num_dots = 100
         
         self.cid_press = self.plt_points.figure.canvas.mpl_connect('button_press_event', self.press_event)
         self.cid_move = self.plt_points.figure.canvas.mpl_connect('motion_notify_event', self.move_event)
         self.cid_release = self.plt_points.figure.canvas.mpl_connect('button_release_event', self.release_event)
         self.cid_erease = self.plt_points.figure.canvas.mpl_connect('button_press_event', self.erease_event)
         
-    def update_data(self, knots, method, L, libraries, num_points, degree):
-        self.knots = knots
-        self.method = method
-        self.L = L
-        self.libraries = libraries
-        self.num_points = num_points
-        self.degree = degree if degree != 0 else None
-    
-          
+    def update_data(self, a, b, xi, k, nu, num_dots):
+        self.a = a
+        self.b = b
+        self.xi = xi
+        self.k = k
+        self.nu = nu
+        self.A = self.plt_points
+        self.num_dots = 100
+              
     def update_curve(self):
-        p = spline2d()
+        p = spline2d(self.a, self.b, self.xi, self.k, self.nu, self.A, self.num_dots)
+        self.plt_curve.set_data(p[:,0],p[:,1])
         self.plt_points.set_data(self.xs, self.ys)
         self.plt_points.figure.canvas.draw()
     
@@ -95,69 +97,54 @@ def main(args=None):
     
     #Se crea la ventana
     root = Tk()
-    root.title("Polynomial Curve Fitting")
+    root.title("Plane Spline Curve")
     
     #Se crea la zona para seleccionar los nodos
     knots = Frame(root)
     knots.pack(anchor=W) 
-    klabel = Label(knots, text="KNOTS:                ")
+    alabel = Label(knots, text="a: ")
+    alabel.pack(side=LEFT, padx=2, pady=2)
+    La = StringVar()
+    La.set("0")
+    Lavalue = Entry(knots, textvariable=La, width=3, justify=CENTER)
+    Lavalue.pack(side=LEFT)
+    blabel = Label(knots, text="    b: ")
+    blabel.pack(side=LEFT, padx=2, pady=2)
+    Lb = StringVar()
+    Lb.set("1")
+    Lbvalue = Entry(knots, textvariable=Lb, width=3, justify=CENTER)
+    Lbvalue.pack(side=LEFT)
+    xilabel = Label(knots, text="    List of breakpoints: ")
+    xilabel.pack(side=LEFT, padx=2, pady=2)
+    Lxi = StringVar()
+    Lxi.set("")
+    Lxivalue = Entry(knots, textvariable=Lxi, width=30, justify=LEFT)
+    Lxivalue.pack(side=LEFT)
+    
+    #Se crea la zona para seleccionar el orden
+    order = Frame(root)
+    order.pack(anchor=W) 
+    klabel = Label(order, text="Order of the curve: ")
     klabel.pack(side=LEFT, padx=2, pady=2)
-    vn = BooleanVar()
-    vn.set(False)
-    #N = StringVar()
-    #N.set("10")
-    R1=Radiobutton(knots, text="Chebychev   ", variable=vn, value=True)
-    R2=Radiobutton(knots, text="Other    ", variable=vn, value=False)
-    #Nvalue = Entry(knots, textvariable=N, width=3, justify=CENTER)
-    R1.pack(anchor=W, side=LEFT)
-    R2.pack(anchor=W, side=LEFT)
-    #Nvalue.pack()
+    Lk = StringVar()
+    Lk.set("2")
+    Lkvalue = Entry(order, textvariable=Lk, width=3, justify=CENTER)
+    Lkvalue.pack(side=LEFT)
     
-    #Se crea la zona para seleccionar el método
-    method = Frame(root)
-    method.pack(anchor=W) 
-    mlabel = Label(method, text="METHOD:            ")
-    mlabel.pack(side=LEFT, padx=2, pady=2)
-    vm = BooleanVar()
-    vm.set(True)
-    L = StringVar()
-    L.set("0")
-    Lvalue = Entry(method, textvariable=L, width=3, justify=CENTER, state='disabled')
-    D = StringVar()
-    D.set("0")
-    Dvalue = Entry(method, textvariable=D, width=3, justify=CENTER, state='disabled')
-    def check():
-        if vm.get() == 0:
-            Lvalue.configure(state='normal')
-            Dvalue.configure(state='normal')
-        else:
-            Lvalue.configure(state='disabled')
-            Dvalue.configure(state='disabled')
-    R3=Radiobutton(method, text="Newton Polynomial   ", variable=vm, value=True, command=check)
-    R4=Radiobutton(method, text="Least Square Fitting,    L =", variable=vm, value=False, command=check)
-    R3.pack(anchor=W, side=LEFT)
-    R4.pack(anchor=W, side=LEFT)
-    Lvalue.pack(side=LEFT)
-    mlabel2 = Label(method, text="  degree =")
-    mlabel2.pack(side=LEFT)
-    Dvalue.pack(side=LEFT)
+    #Se crea la zona para seleccionar el numero de condiciones
+    smooth = Frame(root)
+    smooth.pack(anchor=W) 
+    nulabel = Label(smooth, text="Number of smoothness conditions: ")
+    nulabel.pack(side=LEFT, padx=2, pady=2)
+    Lnu = StringVar()
+    Lnu.set("")
+    Lnuvalue = Entry(smooth, textvariable=Lnu, width=30, justify=LEFT)
+    Lnuvalue.pack(side=LEFT)
     
-    #Se crea la zona para seleccionar si se usan librerias o no
-    library = Frame(root)
-    library.pack(anchor=W) 
-    llabel = Label(library, text="LIBRARIES:           ")
-    llabel.pack(side=LEFT, padx=2, pady=2)
-    vl = BooleanVar()
-    vl.set(False)
-    R5=Radiobutton(library, text="FALSE   ", variable=vl, value=False, command=check)
-    R6=Radiobutton(library, text="TRUE", variable=vl, value=True, command=check)
-    R5.pack(anchor=W, side=LEFT)
-    R6.pack(anchor=W, side=LEFT)
-    
-    #Se crea la zona para seleccionar ver el numero de puntos:
+    #Se crea la zona para seleccionar el numero de puntos:
     points = Frame(root)
     points.pack(anchor=W) 
-    plabel = Label(points, text="NUM. POINTS:     ")
+    plabel = Label(points, text="Number of dots: ")
     plabel.pack(side=LEFT, padx=2, pady=2)
     P = StringVar()
     P.set("100")
@@ -165,8 +152,7 @@ def main(args=None):
     Pvalue.pack()
     buttons = Frame(root)
     buttons.pack() 
-    
-        
+            
     #Se crea la grafica
     fig = Figure(figsize=(5,4), dpi=100)
     ax = fig.add_subplot(111)
@@ -184,39 +170,23 @@ def main(args=None):
     
     #Se crea el boton para interpolar
     def update():
-        if vn.get() == 1:
-            knots = 'chebyshev'
-        else:
-            knots = 'otro'
-        #nk = int(Nvalue.get())
-        if vm.get() == 0:
-            method = 'least_squares'
-            L = float(Lvalue.get())
-            degree = int(Dvalue.get())
-        else:
-            method = 'newton'
-            L = 0
-            degree = None
-        libraries = vl.get()
-        num_points = int(Pvalue.get())
-        linebuilder.update_data(knots, method, L, libraries, num_points, degree)
-        linebuilder.update_curve()
+        a = float(Lavalue.get())
+        b = float(Lbvalue.get())
+        xi = np.fromstring(Lxivalue.get(),dtype=float, sep=',')
+        k = int(Lkvalue.get())
+        nu = np.fromstring(Lnuvalue.get(),dtype=float, sep=',')
+        num_dots = int(Pvalue.get())
+        linebuilder.update_data(a, b, xi, k, nu, num_dots)
+        print a, b, xi, k, nu, num_dots
+        #linebuilder.update_curve()
     button = Button(buttons, text="UPDATE", command=update)
     button.pack()
     
     #Se añade un pequeño tutorial:
-<<<<<<< HEAD
-    T = Text(root, height=10, width=60)
-    T.pack()
-    T.insert(END, "INSTRUCTIONS: Para introducir el polinomio, se presiona con el botón izquierdo del ratón sobre el punto que se desee añadir.")
-=======
-    T = Text(root, height = 3)
-    T.pack()
-    T.insert(END, 
-        '''INSTRUCTIONS: Left click to introduce points and find the interpolation curve. You can drag points to move them or right click to erase them. Configure above options to see different curves.'''
-    )
->>>>>>> f2d9888bbe688006b78b7a12ec4ba19a10de1850
-        
+    Ti = Text(root, height=4, width=50)
+    Ti.pack()
+    Ti.insert(END, '''INSTRUCTIONS:  Left click to introduce points and find the plane spline curve. You can drag points  to move them or right click to erase them. Configure above options to see different curves.''')
+    
     root.mainloop()
 
 if __name__ == "__main__": sys.exit(main())
