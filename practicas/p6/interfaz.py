@@ -46,7 +46,7 @@ class DrawPoints(object):
         self.num_dots = 100
               
     def update_curve(self):
-        p = spline2d(self.a, self.b, self.xi, self.k, self.nu, self.plt_points, self.num_dots)
+        p = spline2d(self.a, self.b, self.xi, self.k, self.nu, np.array(self.polygon), self.num_dots)
         self.plt_curve.set_data(p[:,0],p[:,1])
         self.plt_points.set_data(self.xs, self.ys)
         self.plt_points.figure.canvas.draw()
