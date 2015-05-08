@@ -13,7 +13,7 @@ from ttk import *
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.backend_bases import key_press_handler
-from splines import spline2d
+from spline import spline2d
   
 class DrawPoints(object):
     def __init__(self, points):
@@ -46,13 +46,13 @@ class DrawPoints(object):
         self.num_dots = 100
               
     def update_curve(self):
-        p = spline2d(self.a, self.b, self.xi, self.k, self.nu, self.plt_points, self.num_dots)
-        self.plt_curve.set_data(p[:,0],p[:,1])
+        p = spline2d(self.a, self.b, self.xi, self.k, self.nu, np.array(self.polygon), self.num_dots)
+        self.plt_curve.set_data([x for x,_ in p], [y for _,y in p])
         self.plt_points.set_data(self.xs, self.ys)
         self.plt_points.figure.canvas.draw()
         
     def update_curve2(self):
-        self.plt_curve = []
+        self.plt_curve, = self.plt_points.axes.plot([], [], 'k')
         self.plt_points.set_data(self.xs, self.ys)
         self.plt_points.figure.canvas.draw()
     
@@ -114,13 +114,13 @@ def main(args=None):
     blabel = Label(knots, text="        b: ")
     blabel.pack(side=LEFT, padx=2, pady=2)
     Lb = StringVar()
-    Lb.set("1")
+    Lb.set("4")
     Lbvalue = Entry(knots, textvariable=Lb, width=3, justify=CENTER)
     Lbvalue.pack(side=LEFT)
     xilabel = Label(knots, text="        Breakpoints (floats separated by spaces: ")
     xilabel.pack(side=LEFT, padx=2, pady=2)
     Lxi = StringVar()
-    Lxi.set("")
+    Lxi.set("1 2 3")
     Lxivalue = Entry(knots, textvariable=Lxi, width=30, justify=LEFT)
     Lxivalue.pack(side=LEFT)
     
@@ -130,7 +130,7 @@ def main(args=None):
     klabel = Label(order, text="Order of the curve: ")
     klabel.pack(side=LEFT, padx=2, pady=2)
     Lk = StringVar()
-    Lk.set("1")
+    Lk.set("3")
     Lkvalue = Entry(order, textvariable=Lk, width=3, justify=CENTER)
     Lkvalue.pack(side=LEFT)
     
@@ -140,7 +140,7 @@ def main(args=None):
     nulabel = Label(smooth, text="Number of smoothness conditions (integers separated by spaces): ")
     nulabel.pack(side=LEFT, padx=2, pady=2)
     Lnu = StringVar()
-    Lnu.set("")
+    Lnu.set("2 2 2")
     Lnuvalue = Entry(smooth, textvariable=Lnu, width=30, justify=LEFT)
     Lnuvalue.pack(side=LEFT)
     
