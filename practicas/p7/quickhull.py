@@ -37,7 +37,7 @@ def quickhull(pts, eps=0.01, segment=None):
 
         m = pts.repeat(xaxis == np.amin(xaxis), axis=0)
         m = m[np.argmin(m[:, 1])]
-        
+
         M = pts.repeat(xaxis == np.amax(xaxis), axis=0)
         M = M[np.argmax(M[:, 1])]
 

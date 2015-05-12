@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 # http://en.wikibooks.org/wiki/Algorithm_Implementation/Geometry/Convex_hull/Monotone_chain
 
-def convex_hull(points):
+def convex_hull2(points):
     """Computes the convex hull of a set of 2D points.
 
     Input: an iterable sequence of (x, y) pairs representing the points.
@@ -48,7 +48,129 @@ def convex_hull(points):
     return upper[::-1][:-1] + lower[::-1]  # upper[:-1]
 
 
+def andrews_hull(pts):
+    # pts = np.array(sorted(set(tuple(p) for p in pts)))
+    pts = np.sort(pts, axis=0)
+
+    # def dome(pts):
+    #     r = []
+    #     for p in pts:
+    #         if len(r) >= 2 and np.cross(r[-1] - r[-2], p - r[-1]) <= 0: r.pop()
+    #         if len(r) >= 1 and np.array_equal(p, r[-1]): continue
+    #         r.append(p)
+    #     return r
+    #
+    # # return dome(pts)[:-1] + dome(pts[::-1])
+    # return (dome(pts)[:-1] + dome(reversed(pts)))[::-1]
+
+    r = []; lwr = r
+    for p in pts:
+        if len(r) >= 2 and np.cross(r[-1] - r[-2], p - r[-1]) <= 0: r.pop()
+        if len(r) >= 1 and np.array_equal(p, r[-1]): continue
+        r.append(p)
+
+    r = []; upp = r
+    for p in reversed(pts):
+        if len(r) >= 2 and np.cross(r[-1] - r[-2], p - r[-1]) <= 0: r.pop()
+        if len(r) >= 1 and np.array_equal(p, r[-1]): continue
+        r.append(p)
+
+    return (lwr[:-1] + upp)[::-1]
+
+
+def andrews_hull2(pts):
+    pts = np.array(sorted(set(tuple(p) for p in pts)))
+
+    # def dome(pts):
+    #     r = []
+    #     for p in pts:
+    #         if len(r) >= 2 and np.cross(r[-1] - r[-2], p - r[-1]) <= 0: r.pop()
+    #         if len(r) >= 1 and np.array_equal(p, r[-1]): continue
+    #         r.append(p)
+    #     return r
+    #
+    # # return dome(pts)[:-1] + dome(pts[::-1])
+    # return (dome(pts)[:-1] + dome(reversed(pts)))[::-1]
+
+    r = []; lwr = r
+    for p in pts:
+        if len(r) >= 2 and np.cross(r[-1] - r[-2], p - r[-1]) <= 0: r.pop()
+        r.append(p)
+
+    r = []; upp = r
+    for p in reversed(pts):
+        if len(r) >= 2 and np.cross(r[-1] - r[-2], p - r[-1]) <= 0: r.pop()
+        r.append(p)
+
+    return (lwr[:-1] + upp)[::-1]
+
+
+def andrews_hull3(pts):
+    pts = np.array(sorted(set(tuple(p) for p in pts)))
+
+    def dome(pts):
+        r = []
+        for p in pts:
+            if len(r) >= 2 and np.cross(r[-1] - r[-2], p - r[-1]) <= 0: r.pop()
+            # if len(r) >= 1 and np.array_equal(p, r[-1]): continue
+            r.append(p)
+        return r
+
+    # return dome(pts)[:-1] + dome(pts[::-1])
+    return (dome(pts)[:-1] + dome(reversed(pts)))[::-1]
+
+
+def andrews_hull4(pts):
+    pts = np.sort(pts, axis=0)
+
+    def dome(pts):
+        r = []
+        for p in pts:
+            if len(r) >= 2 and np.cross(r[-1] - r[-2], p - r[-1]) <= 0: r.pop()
+            if len(r) >= 1 and np.array_equal(p, r[-1]): continue
+            r.append(p)
+        return r
+
+    # return dome(pts)[:-1] + dome(pts[::-1])
+    return (dome(pts)[:-1] + dome(reversed(pts)))[::-1]
+
+
+def andrews_hull5(pts):
+    pts = sorted(set(tuple(p) for p in pts))
+
+    def cross(O, A, B): return (A[0] - O[0]) * (B[1] - O[1]) - (A[1] - O[1]) * (B[0] - O[0])
+
+    def dome(pts):
+        r = []
+        for p in pts:
+            while len(r) >= 2 and cross(r[-2], r[-1], p) <= 0: r.pop()
+            r.append(p)
+        return r
+
+    return (dome(pts)[:-1] + dome(reversed(pts)))[::-1]
+
+
+def andrews_hull6(pts):
+    pts = sorted(set(tuple(p) for p in pts))
+
+    def cross(O, A, B): return (A[0] - O[0]) * (B[1] - O[1]) - (A[1] - O[1]) * (B[0] - O[0])
+
+    r = []; lwr = r
+    for p in pts:
+        while len(r) >= 2 and cross(r[-2], r[-1], p) <= 0: r.pop()
+        r.append(p)
+
+    r = []; upp = r
+    for p in reversed(pts):
+        while len(r) >= 2 and cross(r[-2], r[-1], p) <= 0: r.pop()
+        r.append(p)
+
+    return np.array((lwr[:-1] + upp)[::-1])
+
+convex_hull = andrews_hull5
+# def convex_hull(points): return andrews_hull5(points)
 # Example: convex hull of a 10-by-10 grid.
+
 
 '''
 if __name__ == "__main__":
@@ -61,15 +183,18 @@ if __name__ == "__main__":
     # hull = np.array(quickhull(points))
 
     # points = np.array([[0, 0], [1, 0]])
-    points = np.array([[-1, 0], [1, 0], [1, 1], [-1, 0], [1, 0], [1, 1]])
+    # points = np.array([[-1, 0], [1, 1], [1, 0], [-1, 0], [1, 0], [1, 1]])
     # points = np.array([[0, 0], [0, 1], [0, 2], [0, 3], [0, 1]])
 
-    # execfile("data.py")
-    # points = np.array(points)
+    execfile("data2.py")
+    points = np.array(points)
 
-    hull = np.array(convex_hull(points))
+    hull = (convex_hull(points))
     print(hull)
+    print(result)
 
+    hull = np.array(hull)
     plt.plot(hull[:, 0], hull[:, 1])
     plt.plot(points[:, 0], points[:, 1], 'r.')
+    plt.show()
 '''
