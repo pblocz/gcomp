@@ -60,7 +60,8 @@ def quickhull(pts, eps=0.01, segment=None):
            quickhull(outer, eps, segment=(pivot, sE))[1:]
 
 
-def convex_hull(pts): return quickhull(np.array(pts), eps=0.0)
+def convex_hull(pts): 
+    return quickhull(np.array(pts), eps=0.0)
 
 
 '''
