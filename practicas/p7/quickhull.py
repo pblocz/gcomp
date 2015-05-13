@@ -1,5 +1,10 @@
 #!/usr/bin/env python2
 
+'''
+Computational Geometry Assignments | (c) 2015 Pablo Cabeza & Diego González
+license: modified BSD
+'''
+
 import numpy as np
 import matplotlib.pyplot as plt
 
