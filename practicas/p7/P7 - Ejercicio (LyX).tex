@@ -1,0 +1,102 @@
+%% LyX 2.1.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[spanish]{article}
+\usepackage[T1]{fontenc}
+\usepackage{color}
+
+\makeatletter
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{babel}
+
+\makeatother
+
+\usepackage{babel}
+\addto\shorthandsspanish{\spanishdeactivate{~<>}}
+
+\begin{document}
+
+\title{\textbf{Práctica 7}}
+
+
+\author{Pablo Cabeza García y Diego González Domínguez}
+
+\maketitle
+
+\section*{Ejercicio:}
+
+\textbf{Dar el pseudo código de un algoritmo incremental que calcule
+la envoltura convexa de n puntos en el plano con coste O(n·log n),
+justificando la respuesta.}
+
+Los pasos a seguir en el algoritmo incremental serían los siguientes:
+\begin{enumerate}
+\item Ordenar los puntos en función de su primera coordenada (de izquierda
+a derecha).
+\item Calcular la envoltura superior y la envoltura inferior.
+\item Concatenar ambos resultados
+\end{enumerate}
+El pseudocódigo sería:
+
+\textcolor{white}{a}
+
+Entrada: Un conjunto P de puntos en el plano. 
+
+Salida: Una lista EC que contiene los vértices de la envoltura convexa
+en el sentido horario. 
+
+\textcolor{white}{a}
+
+$P=p_{1},...,p_{n}$ \textcolor{green}{//Ordenar los puntos por la
+x-coordenada}
+
+\textcolor{green}{//Cálculo de la envoltura superior:}
+
+$ECs=[p_{1},p_{2}]$ \textcolor{green}{//Insertar $p_{1}$ y $p_{2}$en
+la envoltura superior}
+
+for $(3\leq i\leq n)$:
+
+\qquad{}$ECs=[p_{1},...,p_{h-1},p_{h},p_{i}]$ /\textcolor{green}{/Añadir
+$p_{i}$ a $ECs$ }
+
+\qquad{}$while$ (los 3 últimos puntos de ECs hacen un giro a la
+izquierda):
+
+\qquad{}\qquad{}$ECs=[p_{n},...,p_{h-1},p_{i}]$\textcolor{green}{{}
+//Eliminar penúltimo punto de ECs}
+
+\textcolor{green}{//Cálculo de la envoltura inferior:}
+
+$ECi=[p_{n},p_{n-1}]$ \textcolor{green}{//Insertar $p_{n-1}$ y $p_{n}$en
+la envoltura inferior}
+
+for $(n-2\geq i\geq1)$:
+
+\qquad{}$ECi=[p_{n},...,p_{h-1},p_{h},p_{i}]$ \textcolor{green}{//Añadir
+$p_{i}$ a $ECi$ }
+
+\qquad{}$while$ (los 3 últimos puntos de ECi hacen un giro a la
+izquierda):
+
+\qquad{}\qquad{}$ECi=[p_{n},...,p_{h-1},p_{i}]$ \textcolor{green}{//Eliminar
+penúltimo punto de ECi}
+
+\textcolor{green}{//Cálculo de la envoltura convexa:}
+
+$ECi=[pi_{1},pi_{2},...,pi_{m-1},pi_{m}]\quad\rightarrow\quad ECi=[pi_{2},...,pi_{m-1}]$
+\textcolor{green}{//Eliminar primer y último punto de la envoltura
+inferior}
+
+$EC=ECs+ECi$ \textcolor{green}{//Concatenar $ECs$ y $ECi$ y devolver
+el resultado}
+
+\textcolor{white}{a}
+
+La parte incremental consiste en que se pueden usar los datos calculados
+si se inserta un nuevo punto:
+\begin{enumerate}
+\item Si el nuevo punto está dentro de la envoltura, no se hace nada.
+\item Si está fuera, se añad\textcolor{black}{e a $ECs$ o $ECi$ según
+su posición y se procede como en el algoritmo anterior}\end{enumerate}
+
+\end{document}

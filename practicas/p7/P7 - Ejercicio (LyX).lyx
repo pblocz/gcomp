@@ -1,0 +1,370 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+\usepackage{babel}
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language spanish
+\language_package default
+\inputencoding auto
+\fontencoding T1
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 0
+\use_package cancel 0
+\use_package esint 1
+\use_package mathdots 0
+\use_package mathtools 0
+\use_package mhchem 0
+\use_package stackrel 0
+\use_package stmaryrd 0
+\use_package undertilde 0
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language french
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+
+\series bold
+Práctica 7
+\end_layout
+
+\begin_layout Author
+Pablo Cabeza García y Diego González Domínguez
+\end_layout
+
+\begin_layout Section*
+Ejercicio:
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Dar el pseudo código de un algoritmo incremental que calcule la envoltura
+ convexa de n puntos en el plano con coste O(n·log n), justificando la respuesta.
+\end_layout
+
+\begin_layout Standard
+Los pasos a seguir en el algoritmo incremental serían los siguientes:
+\end_layout
+
+\begin_layout Enumerate
+Ordenar los puntos en función de su primera coordenada (de izquierda a derecha).
+\end_layout
+
+\begin_layout Enumerate
+Calcular la envoltura superior y la envoltura inferior.
+\end_layout
+
+\begin_layout Enumerate
+Concatenar ambos resultados
+\end_layout
+
+\begin_layout Standard
+El pseudocódigo sería:
+\end_layout
+
+\begin_layout Standard
+
+\color white
+a
+\end_layout
+
+\begin_layout Standard
+Entrada: Un conjunto P de puntos en el plano.
+ 
+\end_layout
+
+\begin_layout Standard
+Salida: Una lista EC que contiene los vértices de la envoltura convexa en
+ el sentido horario.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\color white
+a
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $P=p_{1},...,p_{n}$
+\end_inset
+
+ 
+\color green
+//Ordenar los puntos por la x-coordenada
+\end_layout
+
+\begin_layout Standard
+
+\color green
+//Cálculo de la envoltura superior:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $ECs=[p_{1},p_{2}]$
+\end_inset
+
+ 
+\color green
+//Insertar 
+\begin_inset Formula $p_{1}$
+\end_inset
+
+ y 
+\begin_inset Formula $p_{2}$
+\end_inset
+
+en la envoltura superior
+\end_layout
+
+\begin_layout Standard
+for 
+\begin_inset Formula $(3\leq i\leq n)$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset Formula $ECs=[p_{1},...,p_{h-1},p_{h},p_{i}]$
+\end_inset
+
+ /
+\color green
+/Añadir 
+\begin_inset Formula $p_{i}$
+\end_inset
+
+ a 
+\begin_inset Formula $ECs$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset Formula $while$
+\end_inset
+
+ (los 3 últimos puntos de ECs hacen un giro a la izquierda):
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset Formula $ECs=[p_{n},...,p_{h-1},p_{i}]$
+\end_inset
+
+
+\color green
+ //Eliminar penúltimo punto de ECs
+\end_layout
+
+\begin_layout Standard
+
+\color green
+//Cálculo de la envoltura inferior:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $ECi=[p_{n},p_{n-1}]$
+\end_inset
+
+ 
+\color green
+//Insertar 
+\begin_inset Formula $p_{n-1}$
+\end_inset
+
+ y 
+\begin_inset Formula $p_{n}$
+\end_inset
+
+en la envoltura inferior
+\end_layout
+
+\begin_layout Standard
+for 
+\begin_inset Formula $(n-2\geq i\geq1)$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset Formula $ECi=[p_{n},...,p_{h-1},p_{h},p_{i}]$
+\end_inset
+
+ 
+\color green
+//Añadir 
+\begin_inset Formula $p_{i}$
+\end_inset
+
+ a 
+\begin_inset Formula $ECi$
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset Formula $while$
+\end_inset
+
+ (los 3 últimos puntos de ECi hacen un giro a la izquierda):
+\end_layout
+
+\begin_layout Standard
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset space \qquad{}
+\end_inset
+
+
+\begin_inset Formula $ECi=[p_{n},...,p_{h-1},p_{i}]$
+\end_inset
+
+ 
+\color green
+//Eliminar penúltimo punto de ECi
+\end_layout
+
+\begin_layout Standard
+
+\color green
+//Cálculo de la envoltura convexa:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $ECi=[pi_{1},pi_{2},...,pi_{m-1},pi_{m}]\quad\rightarrow\quad ECi=[pi_{2},...,pi_{m-1}]$
+\end_inset
+
+ 
+\color green
+//Eliminar primer y último punto de la envoltura inferior
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $EC=ECs+ECi$
+\end_inset
+
+ 
+\color green
+//Concatenar 
+\begin_inset Formula $ECs$
+\end_inset
+
+ y 
+\begin_inset Formula $ECi$
+\end_inset
+
+ y devolver el resultado
+\end_layout
+
+\begin_layout Standard
+
+\color white
+a
+\end_layout
+
+\begin_layout Standard
+La parte incremental consiste en que se pueden usar los datos calculados
+ si se inserta un nuevo punto:
+\end_layout
+
+\begin_layout Enumerate
+Si el nuevo punto está dentro de la envoltura, no se hace nada.
+\end_layout
+
+\begin_layout Enumerate
+Si está fuera, se añad
+\color black
+e a 
+\begin_inset Formula $ECs$
+\end_inset
+
+ o 
+\begin_inset Formula $ECi$
+\end_inset
+
+ según su posición y se procede como en el algoritmo anterior
+\end_layout
+
+\end_body
+\end_document
