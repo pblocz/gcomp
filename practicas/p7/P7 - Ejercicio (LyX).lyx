@@ -217,7 +217,7 @@ for
 \end_inset
 
 
-\begin_inset Formula $ECs=[p_{n},...,p_{h-1},p_{i}]$
+\begin_inset Formula $ECs=[p_{1},...,p_{h-1},p_{i}]$
 \end_inset
 
 
@@ -335,35 +335,6 @@ for
 \end_inset
 
  y devolver el resultado
-\end_layout
-
-\begin_layout Standard
-
-\color white
-a
-\end_layout
-
-\begin_layout Standard
-La parte incremental consiste en que se pueden usar los datos calculados
- si se inserta un nuevo punto:
-\end_layout
-
-\begin_layout Enumerate
-Si el nuevo punto está dentro de la envoltura, no se hace nada.
-\end_layout
-
-\begin_layout Enumerate
-Si está fuera, se añad
-\color black
-e a 
-\begin_inset Formula $ECs$
-\end_inset
-
- o 
-\begin_inset Formula $ECi$
-\end_inset
-
- según su posición y se procede como en el algoritmo anterior
 \end_layout
 
 \end_body

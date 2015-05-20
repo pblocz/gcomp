@@ -62,7 +62,7 @@ $p_{i}$ a $ECs$ }
 \qquad{}$while$ (los 3 últimos puntos de ECs hacen un giro a la
 izquierda):
 
-\qquad{}\qquad{}$ECs=[p_{n},...,p_{h-1},p_{i}]$\textcolor{green}{{}
+\qquad{}\qquad{}$ECs=[p_{1},...,p_{h-1},p_{i}]$\textcolor{green}{{}
 //Eliminar penúltimo punto de ECs}
 
 \textcolor{green}{//Cálculo de la envoltura inferior:}
@@ -89,14 +89,4 @@ inferior}
 
 $EC=ECs+ECi$ \textcolor{green}{//Concatenar $ECs$ y $ECi$ y devolver
 el resultado}
-
-\textcolor{white}{a}
-
-La parte incremental consiste en que se pueden usar los datos calculados
-si se inserta un nuevo punto:
-\begin{enumerate}
-\item Si el nuevo punto está dentro de la envoltura, no se hace nada.
-\item Si está fuera, se añad\textcolor{black}{e a $ECs$ o $ECi$ según
-su posición y se procede como en el algoritmo anterior}\end{enumerate}
-
 \end{document}
