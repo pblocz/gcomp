@@ -1,21 +1,21 @@
 #!/usr/bin/env python2
+# -*- encoding: utf-8 -*-
+
+'''
+Computational Geometry Assignments | (c) 2015 Pablo Cabeza & Diego González
+license: modified BSD
+'''
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 
-def pplot(points, *args, **kwargs):
-    "plot points in the form of numpy.array(shape=(m,2))"
-    plt.plot(points[:, 0], points[:, 1], *args, **kwargs)
-
-
-def quickhull(pts, eps=0.01, segment=None):
+def quickhull(pts, segment=None):
     '''
     Computes the convex hull of a set of points.
     Inpired in [this quickhull](http://en.literateprograms.org/Quickhull_(Python,_arrays))
 
     To compute `dists`, we find a normal vector to the segment and then
-    project each point to that vector using the `np.dot` product.
+    project each point to that vector using `numpy.dot` product.
 
     Arguments
     ---------
@@ -23,65 +23,77 @@ def quickhull(pts, eps=0.01, segment=None):
 
     Keyword argumens
     ----------------
-    - `eps`: the threadhold to compare with zero
     - `segment`: a pair (a,b) that divides the set of points. If `None`, then
       use as segment the extremes x-value points and initialize quickhull
 
     Return
     ------
-    The resulting hull in counterclockwise order as a (m,2) shape `numpy.array`
+    A list of point pairs that conforms the convex hull in clockwise order
+    starting from the lowest lexicographic-wise point.
     '''
 
     if segment is None:  # initialization, find extremes and call quickhull
+        pts = np.array(pts)
         xaxis = pts[:, 0]
+        # m, M = pts[np.argmin(xaxis)], pts[np.argmax(xaxis)]
 
         m = pts.repeat(xaxis == np.amin(xaxis), axis=0)
         m = m[np.argmin(m[:, 1])]
-        
+
         M = pts.repeat(xaxis == np.amax(xaxis), axis=0)
         M = M[np.argmax(M[:, 1])]
 
-        return quickhull(pts, eps, (m, M)) + quickhull(pts, eps, (M, m))[1:]
+        return quickhull(pts, (m, M)) + quickhull(pts, (M, m))[1:]
 
     sB, sE = segment; vector = sE - sB
     dists = np.dot(pts - sB, [-vector[1], vector[0]])
-    outer = pts.repeat(dists > eps, axis=0)  # take dists > eps elements
+    outer = pts.repeat(dists > 0, axis=0)  # take dists > eps elements
+    # outer = pts[dists > eps]
 
     if not outer.size: return segment  # base case: no points above
 
     # recursive: find pivot and repeat over new segments
     pivot = pts[np.argmax(dists)]
-    return quickhull(outer, eps, segment=(sB, pivot)) +\
-           quickhull(outer, eps, segment=(pivot, sE))[1:]
+    return quickhull(outer, segment=(sB, pivot)) +\
+           quickhull(outer, segment=(pivot, sE))[1:]
 
 
-def convex_hull(pts): 
-    return quickhull(np.array(pts), eps=0.0)
+def quickhull_recursion(pts, segment):
+    '''
+    Given a set of points and a segment dividing them, compute the *upper*
+    convex hull.
+
+    See `quickhull.quickhull` for more details.
+    '''
+    sB, sE = segment; vector = sE - sB
+    dists = np.dot(pts - sB, [-vector[1], vector[0]])
+    outer = pts.repeat(dists > 0, axis=0)  # take dists > eps elements
+    # outer = pts[dists > eps]
+
+    if not outer.size: return segment  # base case: no points above
+
+    # recursive: find pivot and repeat over new segments
+    pivot = pts[np.argmax(dists)]
+    return quickhull_recursion(outer, segment=(sB, pivot)) +\
+           quickhull_recursion(outer, segment=(pivot, sE))[1:]
 
 
-'''
-if __name__ == "__main__":
+def convex_hull(pts):
+    '''
+    Compute the convex hull of a set of points using quickhull algorithm.
+    It initializes the algorithm and then calls `quickhull.quickhull_recursion`.
 
-    npoints = 30
+    See `quickhull.quickhull` for a more complete, *friendly*, version. It is
+    split in 2 functions for performance.
+    '''
+    pts = np.array(pts)
+    xaxis = pts[:, 0]
 
-    # points = np.random.randint(-10, 10, size=(npoints, 2))
-    # hull = np.array(quickhull(points))
+    m = pts.repeat(xaxis == np.amin(xaxis), axis=0)
+    m = m[np.argmin(m[:, 1])]
 
-    # points = np.array([[-1, 0], [1, 0], [1, 1], [-1, 0], [1, 0], [1, 1]])
-    # points = np.array([[0, 0], [0, 1], [0, 2], [0, 3], [0, 1]])
+    M = pts.repeat(xaxis == np.amax(xaxis), axis=0)
+    M = M[np.argmax(M[:, 1])]
 
-    execfile("data.py")
-    points = np.array(points)
-    hull = np.array(convex_hull(points))
-    print(hull)
-
-    plt.plot(hull[:, 0], hull[:, 1])
-    plt.plot(points[:, 0], points[:, 1], 'r.')
-
-    # import time
-    # for i in xrange(len(hull) - 1):
-    #     pplot(np.vstack((hull[i], hull[i + 1], )))
-    #     time.sleep(1)
-
-    plt.show()
-'''
+    return quickhull_recursion(pts, (m, M)) +\
+           quickhull_recursion(pts, (M, m))[1:]
