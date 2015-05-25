@@ -3,7 +3,7 @@
 
 '''
 Computational Geometry Assignments | (c) 2015 Pablo Cabeza & Diego González
-license: modified BSD
+license: modified BSD (http://opensource.org/licenses/BSD-3-Clause)
 '''
 
 import numpy as np

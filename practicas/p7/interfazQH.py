@@ -6,7 +6,6 @@ authors: Pablo Cabeza & Diego González
 '''
 
 import numpy as np
-import scipy.interpolate as sc
 import matplotlib.pyplot as plt
 from Tkinter import *
 from ttk import * 
