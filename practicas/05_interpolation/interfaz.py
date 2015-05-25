@@ -1,20 +1,21 @@
-#! /usr/bin/env python2
-# -*- encoding: utf-8 -*-
+#!/usr/bin/env python2
+# coding=utf-8
 
 '''
-authors: Pablo Cabeza & Diego González
+Computational Geometry Assignments | (c) 2015 Pablo Cabeza & Diego González
+license: [modified BSD](http://opensource.org/licenses/BSD-3-Clause)
 '''
 
 import numpy as np
 import scipy.interpolate as sc
 import matplotlib.pyplot as plt
 from Tkinter import *
-from ttk import * 
+from ttk import *
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.backend_bases import key_press_handler
 from polynomial_curve_fitting import polynomial_curve_fitting
-  
+
 class DrawPoints(object):
     def __init__(self, points):
         self.plt_points = points
@@ -23,19 +24,19 @@ class DrawPoints(object):
         self.polygon = zip(self.xs, self.ys)
         self.plt_curve, = points.axes.plot([], [], 'k')
         self.selected_point = None
-        
+
         self.knots = 'otro'
         self.method = 'newton'
         self.L = 0
         self.libraries = False
         self.num_points = 100
         self.degree = None
-        
+
         self.cid_press = self.plt_points.figure.canvas.mpl_connect('button_press_event', self.press_event)
         self.cid_move = self.plt_points.figure.canvas.mpl_connect('motion_notify_event', self.move_event)
         self.cid_release = self.plt_points.figure.canvas.mpl_connect('button_release_event', self.release_event)
         self.cid_erease = self.plt_points.figure.canvas.mpl_connect('button_press_event', self.erease_event)
-        
+
     def update_data(self, knots, method, L, libraries, num_points, degree):
         self.knots = knots
         self.method = method
@@ -43,18 +44,18 @@ class DrawPoints(object):
         self.libraries = libraries
         self.num_points = num_points
         self.degree = degree if degree != 0 else None
-    
+
     def print_data(self):
-        print self.knots, ",", self.method, ",", self.L, ",", self.libraries, ",", self.num_points, ",", self.degree  
-          
+        print self.knots, ",", self.method, ",", self.L, ",", self.libraries, ",", self.num_points, ",", self.degree
+
     def update_curve(self):
 <<<<<<< HEAD
-        if self.knots == 'otros': 
+        if self.knots == 'otros':
             knots = np.linespace(0,1,len(self.polygon))
         else:
             knots = self.knots
 =======
-        if self.knots == "otro": knots = np.linspace(0,1,len(self.polygon)) 
+        if self.knots == "otro": knots = np.linspace(0,1,len(self.polygon))
         else: knots = self.knots
 
 >>>>>>> f2d9888bbe688006b78b7a12ec4ba19a10de1850
@@ -63,15 +64,15 @@ class DrawPoints(object):
         self.plt_points.set_data(self.xs, self.ys)
         self.plt_points.figure.canvas.draw()
         # self.print_data()
-    
+
     def new_point(self, event):
         self.xs.append(event.xdata)
         self.ys.append(event.ydata)
         self.polygon.append([event.xdata,event.ydata])
         self.update_curve()
-         
+
     def press_event(self, event):
-        if event.inaxes != self.plt_points.axes or event.button != 1: 
+        if event.inaxes != self.plt_points.axes or event.button != 1:
             return
         state, indices = self.plt_points.contains(event)
         if not state:
@@ -79,22 +80,22 @@ class DrawPoints(object):
         else:
             self.selected_point = indices['ind'][0]
             # print self.selected_point
-            
-    def move_event(self, event): 
+
+    def move_event(self, event):
         if event.inaxes != self.plt_points.axes or self.selected_point is None:
             return
         self.xs[self.selected_point] = event.xdata
         self.ys[self.selected_point] = event.ydata
         self.polygon[self.selected_point] = [event.xdata,event.ydata]
-        self.update_curve()     
-        
-    def release_event(self, event):  
-        if event.inaxes != self.plt_points.axes: 
+        self.update_curve()
+
+    def release_event(self, event):
+        if event.inaxes != self.plt_points.axes:
             return
         self.selected_point = None
-        
+
     def erease_event(self, event):
-        if event.inaxes != self.plt_points.axes or event.button != 3: 
+        if event.inaxes != self.plt_points.axes or event.button != 3:
             return
         state, indices = self.plt_points.contains(event)
         if state:
@@ -102,18 +103,18 @@ class DrawPoints(object):
             del self.xs[index]
             del self.ys[index]
             del self.polygon[index]
-            self.update_curve() 
+            self.update_curve()
 
 def main(args=None):
     args = args or sys.argv
-    
+
     #Se crea la ventana
     root = Tk()
     root.title("Polynomial Curve Fitting")
-    
+
     #Se crea la zona para seleccionar los nodos
     knots = Frame(root)
-    knots.pack(anchor=W) 
+    knots.pack(anchor=W)
     klabel = Label(knots, text="KNOTS:                ")
     klabel.pack(side=LEFT, padx=2, pady=2)
     vn = BooleanVar()
@@ -126,10 +127,10 @@ def main(args=None):
     R1.pack(anchor=W, side=LEFT)
     R2.pack(anchor=W, side=LEFT)
     #Nvalue.pack()
-    
+
     #Se crea la zona para seleccionar el método
     method = Frame(root)
-    method.pack(anchor=W) 
+    method.pack(anchor=W)
     mlabel = Label(method, text="METHOD:            ")
     mlabel.pack(side=LEFT, padx=2, pady=2)
     vm = BooleanVar()
@@ -155,10 +156,10 @@ def main(args=None):
     mlabel2 = Label(method, text="  degree =")
     mlabel2.pack(side=LEFT)
     Dvalue.pack(side=LEFT)
-    
+
     #Se crea la zona para seleccionar si se usan librerias o no
     library = Frame(root)
-    library.pack(anchor=W) 
+    library.pack(anchor=W)
     llabel = Label(library, text="LIBRARIES:           ")
     llabel.pack(side=LEFT, padx=2, pady=2)
     vl = BooleanVar()
@@ -167,10 +168,10 @@ def main(args=None):
     R6=Radiobutton(library, text="TRUE", variable=vl, value=True, command=check)
     R5.pack(anchor=W, side=LEFT)
     R6.pack(anchor=W, side=LEFT)
-    
+
     #Se crea la zona para seleccionar ver el numero de puntos:
     points = Frame(root)
-    points.pack(anchor=W) 
+    points.pack(anchor=W)
     plabel = Label(points, text="NUM. POINTS:     ")
     plabel.pack(side=LEFT, padx=2, pady=2)
     P = StringVar()
@@ -178,9 +179,9 @@ def main(args=None):
     Pvalue = Entry(points, textvariable=P, width=5, justify=CENTER)
     Pvalue.pack()
     buttons = Frame(root)
-    buttons.pack() 
-    
-        
+    buttons.pack()
+
+
     #Se crea la grafica
     fig = Figure(figsize=(5,4), dpi=100)
     ax = fig.add_subplot(111)
@@ -191,11 +192,11 @@ def main(args=None):
     toolbar = NavigationToolbar2TkAgg(canvas, root)
     toolbar.update()
     canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
-    
+
     #Se generan los puntos e interpolamos
     points, = ax.plot([], [], 'ro-')
     linebuilder = DrawPoints(points)
-    
+
     #Se crea el boton para interpolar
     def update():
         if vn.get() == 1:
@@ -217,7 +218,7 @@ def main(args=None):
         linebuilder.update_curve()
     button = Button(buttons, text="UPDATE", command=update)
     button.pack()
-    
+
     #Se añade un pequeño tutorial:
 <<<<<<< HEAD
     T = Text(root, height=10, width=60)
@@ -226,11 +227,11 @@ def main(args=None):
 =======
     T = Text(root, height = 3)
     T.pack()
-    T.insert(END, 
+    T.insert(END,
         '''INSTRUCTIONS: Left click to introduce points and find the interpolation curve. You can drag points to move them or right click to erase them. Configure above options to see different curves.'''
     )
 >>>>>>> f2d9888bbe688006b78b7a12ec4ba19a10de1850
-        
+
     root.mainloop()
 
 if __name__ == "__main__": sys.exit(main())
