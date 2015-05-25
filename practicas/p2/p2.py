@@ -1,18 +1,24 @@
-#! /usr/bin/python -O
+#! /usr/bin/python2
 # -*- coding: utf-8 -*-
 '''
 Practica 3
 
 @author: Pablo Cabeza García y Diego González
 '''
-import sys, re, argparse
-import sympy as sp, numpy as np, matplotlib.pyplot as plt
+import sys
+import re
+import argparse
+import sympy as sp
+import numpy as np
+import matplotlib.pyplot as plt
 from mayavi import mlab
 from scipy.integrate import odeint
 from scipy.spatial.distance import pdist
 
-def hex2rgb(color): 
-    return tuple(int(i,16)/255.0 for i in re.match('#?(.{2})(.{2})(.{2})',color).groups())
+
+def hex2rgb(color):
+    return tuple(int(i, 16) / 255.0 for i in re.match('#?(.{2})(.{2})(.{2})', color).groups())
+
 
 class BaseParametrized(object):
     '''
@@ -23,20 +29,20 @@ class BaseParametrized(object):
         self.u, self.v = [v for v,_ in parameters]
         self.uR, self.vR = [list(r) for _,r in parameters]
 
-    @property 
+    @property
     def parameters(self): return [(self.u, self.uR), (self.v, self.vR)]
-    
-    @property 
+
+    @property
     def variables(self): return [self.u, self.v]
 
 
-    @staticmethod 
+    @staticmethod
     def _range(R,points): return np.linspace(*(R + [points]))
 
-    @property 
+    @property
     def urange(self, npoints = 100): return self._range(self.uR, npoints)
 
-    @property 
+    @property
     def vrange(self, npoints = 100): return self._range(self.vR, npoints)
 
 
@@ -58,14 +64,14 @@ class Geodesic(object):
 
     def show(self): plt.show(); return self
 
-    def clear(self): 
+    def clear(self):
         if self.figure: self.figure.clear()
         else: plt.clf()
 
         self.figure = None
         return self
 
-    def savefig(self,*args,**kwargs): 
+    def savefig(self,*args,**kwargs):
         plt.savefig(*args,figure= self.figure,**kwargs)
         return self
 
@@ -97,7 +103,7 @@ class FFForm(BaseParametrized):
         I = self._curvize(I, list(U))
 
         U__ = (1/2.0 * sp.Matrix([U_.T * Iu * U_, U_.T*Iv*U_]).T - U_.T*(Iu*U_[0] + Iv*U_[1]))\
-              * (I**-1); 
+              * (I**-1);
         U__ = sp.simplify(U__).T
 
         MU__ = U__.subs(zip(list(U_), [du,dv] ,))
@@ -134,10 +140,10 @@ class Parametrization3D(BaseParametrized):
                                      for s in [x,y,z]]
         self.figure = {}
 
-    @property 
+    @property
     def surface(self): return sp.Matrix([self.x, self.y, self.z])
 
-    @property 
+    @property
     def lsurface(self): return [self.lx, self.ly, self.lz]
 
 
@@ -152,7 +158,7 @@ class Parametrization3D(BaseParametrized):
 
         mlab.mesh(*[k(u_mesh,v_mesh) for k in self.lsurface],figure = self.figure,
                   **kwargs)
-    
+
     def _plot3d(self,curve, points,**kwargs):
         mlab.plot3d(*[(k(curve[:,0],curve[:,1])) for k in self.lsurface], figure= self.figure,
                     **kwargs)
@@ -166,7 +172,7 @@ class Parametrization3D(BaseParametrized):
         return self.figure
 
     def show(self,figure=None): mlab.draw(figure = figure or self.figure); mlab.show(); return self
-    def clear(self): 
+    def clear(self):
         try: mlab.clf(self.figure); mlab.close(self.figure)
         except: pass
 
@@ -178,7 +184,7 @@ class Parametrization3D(BaseParametrized):
 def modular_plot(geo):
     '''
     Plots the geodesic in the space [0,2pi]x[0,2pi]
-    
+
     It splits the geodesic it chuncks in [0,2pi] and plots them separatedly
     '''
 
@@ -204,20 +210,20 @@ def modular_plot(geo):
 
 def plot_surface_geo(surf, p0, vt, I,
                      geokwargs = {},
-                     fform = None, 
-                     show = True, 
+                     fform = None,
+                     show = True,
                      savefig = None,
                      clear = True,
-                     surfplot = True, 
+                     surfplot = True,
                      **kwargs):
     fform = fform or surf.firstForm()
     geo = fform.geodesic(p0,vt,I,**geokwargs)
 
     if clear: surf.clear()
     if surfplot: surf.plot()
-    
+
     surf.plot(geo,**kwargs)
-    
+
     if savefig: surf.savefig(savefig, size=(1000,1000))
     if show: surf.show()
 
@@ -225,16 +231,16 @@ def plot_surface_geo(surf, p0, vt, I,
 
 def plot_fform_geo(fform, p0, vt, I,
                    geokwargs = {},
-                   show = True, 
+                   show = True,
                    savefig = None,
                    clear = True,
                    **kwargs):
     geo = fform.geodesic(p0,vt,I,**geokwargs)
 
     if clear: geo.clear()
-    
+
     geo.plot(**kwargs)
-    
+
     if savefig: geo.savefig(savefig, size=(1000,1000))
     if show: geo.show()
 
@@ -250,7 +256,7 @@ def main():
     args = parser.parse_args()
 
     # Define variables to use
-    u,v = sp.symbols('u,v')    
+    u,v = sp.symbols('u,v')
 
     # Define torus and get first fundamental form
     R = 2; r = 1
@@ -261,15 +267,15 @@ def main():
     torusff = torus.firstForm()
 
     poincare = FFForm(1/v**2, 0, 1/v**2, parameters = [(u, []), (v, [])])
-       
-                             
-    
+
+
+
     # Example for generators circunferences #
     plot_surface_geo(torus, (0,0),(0,1), (0,2*np.pi),
                      fform = torusff, show=False)
     plot_surface_geo(torus, (0,0),(1,0), (0,2*np.pi),
-                     fform = torusff, 
-                     show=args.show, surfplot=False, clear=False, 
+                     fform = torusff,
+                     show=args.show, surfplot=False, clear=False,
                      savefig='gemerators.png', color=hex2rgb('#A753A4'))
 
     # The above is equivalent to this:
@@ -293,7 +299,7 @@ def main():
                                 # extra arguments for plot3d
                                 line_width=1.0,
                                 tube_radius = None)
-    
+
     # plot uv in by segments to avoid having extra lines
     fig = modular_plot(periodic)
     fig.savefig('periodic_uv.png')
@@ -302,7 +308,7 @@ def main():
 
 
     # example for non periodic geodesic
-    geo = plot_surface_geo(torus, (0,np.pi-np.pi/10.0),(1,1/np.pi), 
+    geo = plot_surface_geo(torus, (0,np.pi-np.pi/10.0),(1,1/np.pi),
                            (0,10*2*np.pi),
                      geokwargs={'npoints':10000},
                      fform = torusff,
@@ -336,7 +342,7 @@ def main():
     torus.plot(dense, line_width=1.0, tube_radius=None)
     torus.savefig('dense.png', size=(1000,1000))
     if args.show: torus.show()
-    
+
     fig = modular_plot(dense)
     fig.savefig('dense_uv.png')
     if args.show: fig.show()
@@ -345,7 +351,7 @@ def main():
 
     # Poincare half-plane geodesics #
     poincare = FFForm(1/v**2, 0, 1/v**2, parameters = [(u, []), (v, [])])
-    
+
     fig = None
     for exp in [i*2 for i in range(1,11)]:
         fig = poincare.geodesic((0,1),(1,exp),(-100,100),npoints=10000)\
