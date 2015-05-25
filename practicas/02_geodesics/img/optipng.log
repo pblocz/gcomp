@@ -1,0 +1,698 @@
+** Warning: The option -log is deprecated; use shell redirection
+
+** Processing: dense.png
+1000x1000 pixels, 3x8 bits/pixel, RGB
+Input IDAT size = 158624 bytes
+Input file size = 158909 bytes
+
+Trying:
+  zc = 9  zm = 9  zs = 0  f = 0		IDAT size = 113204
+  zc = 9  zm = 8  zs = 0  f = 0		IDAT size = 111890
+  zc = 9  zm = 9  zs = 1  f = 0
+  zc = 9  zm = 8  zs = 1  f = 0
+  zc = 1  zm = 9  zs = 2  f = 0
+  zc = 1  zm = 8  zs = 2  f = 0
+  zc = 9  zm = 9  zs = 3  f = 0
+  zc = 9  zm = 8  zs = 3  f = 0
+  zc = 9  zm = 9  zs = 0  f = 1
+  zc = 9  zm = 8  zs = 0  f = 1
+  zc = 9  zm = 9  zs = 1  f = 1
+  zc = 9  zm = 8  zs = 1  f = 1
+  zc = 1  zm = 9  zs = 2  f = 1
+  zc = 1  zm = 8  zs = 2  f = 1
+  zc = 9  zm = 9  zs = 3  f = 1
+  zc = 9  zm = 8  zs = 3  f = 1
+  zc = 9  zm = 9  zs = 0  f = 2
+  zc = 9  zm = 8  zs = 0  f = 2
+  zc = 9  zm = 9  zs = 1  f = 2
+  zc = 9  zm = 8  zs = 1  f = 2
+  zc = 1  zm = 9  zs = 2  f = 2
+  zc = 1  zm = 8  zs = 2  f = 2
+  zc = 9  zm = 9  zs = 3  f = 2
+  zc = 9  zm = 8  zs = 3  f = 2
+  zc = 9  zm = 9  zs = 0  f = 3
+  zc = 9  zm = 8  zs = 0  f = 3
+  zc = 9  zm = 9  zs = 1  f = 3
+  zc = 9  zm = 8  zs = 1  f = 3
+  zc = 1  zm = 9  zs = 2  f = 3
+  zc = 1  zm = 8  zs = 2  f = 3
+  zc = 9  zm = 9  zs = 3  f = 3
+  zc = 9  zm = 8  zs = 3  f = 3
+  zc = 9  zm = 9  zs = 0  f = 4
+  zc = 9  zm = 8  zs = 0  f = 4
+  zc = 9  zm = 9  zs = 1  f = 4
+  zc = 9  zm = 8  zs = 1  f = 4
+  zc = 1  zm = 9  zs = 2  f = 4
+  zc = 1  zm = 8  zs = 2  f = 4
+  zc = 9  zm = 9  zs = 3  f = 4
+  zc = 9  zm = 8  zs = 3  f = 4
+  zc = 9  zm = 9  zs = 0  f = 5
+  zc = 9  zm = 8  zs = 0  f = 5
+  zc = 9  zm = 9  zs = 1  f = 5
+  zc = 9  zm = 8  zs = 1  f = 5
+  zc = 1  zm = 9  zs = 2  f = 5
+  zc = 1  zm = 8  zs = 2  f = 5
+  zc = 9  zm = 9  zs = 3  f = 5
+  zc = 9  zm = 8  zs = 3  f = 5
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 0  f = 0		IDAT size = 111890
+
+Output IDAT size = 111890 bytes (46734 bytes decrease)
+Output file size = 111947 bytes (46962 bytes = 29.55% decrease)
+
+** Warning: The option -log is deprecated; use shell redirection
+
+** Processing: dense_uv.png
+800x600 pixels, 4x8 bits/pixel, RGB+alpha
+Reducing image to 3x8 bits/pixel, RGB
+Input IDAT size = 658090 bytes
+Input file size = 659144 bytes
+
+Trying:
+  zc = 9  zm = 9  zs = 0  f = 0		IDAT size = 577371
+  zc = 9  zm = 8  zs = 0  f = 0		IDAT size = 576869
+  zc = 9  zm = 9  zs = 1  f = 0
+  zc = 9  zm = 8  zs = 1  f = 0
+  zc = 1  zm = 9  zs = 2  f = 0
+  zc = 1  zm = 8  zs = 2  f = 0
+  zc = 9  zm = 9  zs = 3  f = 0
+  zc = 9  zm = 8  zs = 3  f = 0
+  zc = 9  zm = 9  zs = 0  f = 1
+  zc = 9  zm = 8  zs = 0  f = 1
+  zc = 9  zm = 9  zs = 1  f = 1
+  zc = 9  zm = 8  zs = 1  f = 1
+  zc = 1  zm = 9  zs = 2  f = 1
+  zc = 1  zm = 8  zs = 2  f = 1
+  zc = 9  zm = 9  zs = 3  f = 1
+  zc = 9  zm = 8  zs = 3  f = 1
+  zc = 9  zm = 9  zs = 0  f = 2
+  zc = 9  zm = 8  zs = 0  f = 2
+  zc = 9  zm = 9  zs = 1  f = 2
+  zc = 9  zm = 8  zs = 1  f = 2
+  zc = 1  zm = 9  zs = 2  f = 2
+  zc = 1  zm = 8  zs = 2  f = 2
+  zc = 9  zm = 9  zs = 3  f = 2
+  zc = 9  zm = 8  zs = 3  f = 2
+  zc = 9  zm = 9  zs = 0  f = 3
+  zc = 9  zm = 8  zs = 0  f = 3
+  zc = 9  zm = 9  zs = 1  f = 3
+  zc = 9  zm = 8  zs = 1  f = 3
+  zc = 1  zm = 9  zs = 2  f = 3
+  zc = 1  zm = 8  zs = 2  f = 3
+  zc = 9  zm = 9  zs = 3  f = 3
+  zc = 9  zm = 8  zs = 3  f = 3
+  zc = 9  zm = 9  zs = 0  f = 4
+  zc = 9  zm = 8  zs = 0  f = 4
+  zc = 9  zm = 9  zs = 1  f = 4
+  zc = 9  zm = 8  zs = 1  f = 4
+  zc = 1  zm = 9  zs = 2  f = 4
+  zc = 1  zm = 8  zs = 2  f = 4
+  zc = 9  zm = 9  zs = 3  f = 4
+  zc = 9  zm = 8  zs = 3  f = 4
+  zc = 9  zm = 9  zs = 0  f = 5
+  zc = 9  zm = 8  zs = 0  f = 5
+  zc = 9  zm = 9  zs = 1  f = 5
+  zc = 9  zm = 8  zs = 1  f = 5
+  zc = 1  zm = 9  zs = 2  f = 5
+  zc = 1  zm = 8  zs = 2  f = 5
+  zc = 9  zm = 9  zs = 3  f = 5
+  zc = 9  zm = 8  zs = 3  f = 5
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 0  f = 0		IDAT size = 576869
+
+Output IDAT size = 576869 bytes (81221 bytes decrease)
+Output file size = 576962 bytes (82182 bytes = 12.47% decrease)
+
+** Warning: The option -log is deprecated; use shell redirection
+
+** Processing: gemerators.png
+1000x1000 pixels, 3x8 bits/pixel, RGB
+Input IDAT size = 135082 bytes
+Input file size = 135331 bytes
+
+Trying:
+  zc = 9  zm = 9  zs = 0  f = 0
+  zc = 9  zm = 8  zs = 0  f = 0
+  zc = 9  zm = 9  zs = 1  f = 0
+  zc = 9  zm = 8  zs = 1  f = 0
+  zc = 1  zm = 9  zs = 2  f = 0
+  zc = 1  zm = 8  zs = 2  f = 0
+  zc = 9  zm = 9  zs = 3  f = 0
+  zc = 9  zm = 8  zs = 3  f = 0
+  zc = 9  zm = 9  zs = 0  f = 1		IDAT size = 116564
+  zc = 9  zm = 8  zs = 0  f = 1		IDAT size = 115305
+  zc = 9  zm = 9  zs = 1  f = 1
+  zc = 9  zm = 8  zs = 1  f = 1		IDAT size = 115190
+  zc = 1  zm = 9  zs = 2  f = 1
+  zc = 1  zm = 8  zs = 2  f = 1
+  zc = 9  zm = 9  zs = 3  f = 1
+  zc = 9  zm = 8  zs = 3  f = 1
+  zc = 9  zm = 9  zs = 0  f = 2
+  zc = 9  zm = 8  zs = 0  f = 2
+  zc = 9  zm = 9  zs = 1  f = 2
+  zc = 9  zm = 8  zs = 1  f = 2
+  zc = 1  zm = 9  zs = 2  f = 2
+  zc = 1  zm = 8  zs = 2  f = 2
+  zc = 9  zm = 9  zs = 3  f = 2
+  zc = 9  zm = 8  zs = 3  f = 2
+  zc = 9  zm = 9  zs = 0  f = 3
+  zc = 9  zm = 8  zs = 0  f = 3
+  zc = 9  zm = 9  zs = 1  f = 3
+  zc = 9  zm = 8  zs = 1  f = 3
+  zc = 1  zm = 9  zs = 2  f = 3
+  zc = 1  zm = 8  zs = 2  f = 3
+  zc = 9  zm = 9  zs = 3  f = 3
+  zc = 9  zm = 8  zs = 3  f = 3
+  zc = 9  zm = 9  zs = 0  f = 4
+  zc = 9  zm = 8  zs = 0  f = 4
+  zc = 9  zm = 9  zs = 1  f = 4
+  zc = 9  zm = 8  zs = 1  f = 4
+  zc = 1  zm = 9  zs = 2  f = 4
+  zc = 1  zm = 8  zs = 2  f = 4
+  zc = 9  zm = 9  zs = 3  f = 4
+  zc = 9  zm = 8  zs = 3  f = 4
+  zc = 9  zm = 9  zs = 0  f = 5
+  zc = 9  zm = 8  zs = 0  f = 5
+  zc = 9  zm = 9  zs = 1  f = 5
+  zc = 9  zm = 8  zs = 1  f = 5
+  zc = 1  zm = 9  zs = 2  f = 5
+  zc = 1  zm = 8  zs = 2  f = 5
+  zc = 9  zm = 9  zs = 3  f = 5
+  zc = 9  zm = 8  zs = 3  f = 5
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 1  f = 1		IDAT size = 115190
+
+Output IDAT size = 115190 bytes (19892 bytes decrease)
+Output file size = 115247 bytes (20084 bytes = 14.84% decrease)
+
+** Warning: The option -log is deprecated; use shell redirection
+
+** Processing: generators.png
+1000x1000 pixels, 3x8 bits/pixel, RGB
+Input IDAT size = 135082 bytes
+Input file size = 135331 bytes
+
+Trying:
+  zc = 9  zm = 9  zs = 0  f = 0
+  zc = 9  zm = 8  zs = 0  f = 0
+  zc = 9  zm = 9  zs = 1  f = 0
+  zc = 9  zm = 8  zs = 1  f = 0
+  zc = 1  zm = 9  zs = 2  f = 0
+  zc = 1  zm = 8  zs = 2  f = 0
+  zc = 9  zm = 9  zs = 3  f = 0
+  zc = 9  zm = 8  zs = 3  f = 0
+  zc = 9  zm = 9  zs = 0  f = 1		IDAT size = 116564
+  zc = 9  zm = 8  zs = 0  f = 1		IDAT size = 115305
+  zc = 9  zm = 9  zs = 1  f = 1
+  zc = 9  zm = 8  zs = 1  f = 1		IDAT size = 115190
+  zc = 1  zm = 9  zs = 2  f = 1
+  zc = 1  zm = 8  zs = 2  f = 1
+  zc = 9  zm = 9  zs = 3  f = 1
+  zc = 9  zm = 8  zs = 3  f = 1
+  zc = 9  zm = 9  zs = 0  f = 2
+  zc = 9  zm = 8  zs = 0  f = 2
+  zc = 9  zm = 9  zs = 1  f = 2
+  zc = 9  zm = 8  zs = 1  f = 2
+  zc = 1  zm = 9  zs = 2  f = 2
+  zc = 1  zm = 8  zs = 2  f = 2
+  zc = 9  zm = 9  zs = 3  f = 2
+  zc = 9  zm = 8  zs = 3  f = 2
+  zc = 9  zm = 9  zs = 0  f = 3
+  zc = 9  zm = 8  zs = 0  f = 3
+  zc = 9  zm = 9  zs = 1  f = 3
+  zc = 9  zm = 8  zs = 1  f = 3
+  zc = 1  zm = 9  zs = 2  f = 3
+  zc = 1  zm = 8  zs = 2  f = 3
+  zc = 9  zm = 9  zs = 3  f = 3
+  zc = 9  zm = 8  zs = 3  f = 3
+  zc = 9  zm = 9  zs = 0  f = 4
+  zc = 9  zm = 8  zs = 0  f = 4
+  zc = 9  zm = 9  zs = 1  f = 4
+  zc = 9  zm = 8  zs = 1  f = 4
+  zc = 1  zm = 9  zs = 2  f = 4
+  zc = 1  zm = 8  zs = 2  f = 4
+  zc = 9  zm = 9  zs = 3  f = 4
+  zc = 9  zm = 8  zs = 3  f = 4
+  zc = 9  zm = 9  zs = 0  f = 5
+  zc = 9  zm = 8  zs = 0  f = 5
+  zc = 9  zm = 9  zs = 1  f = 5
+  zc = 9  zm = 8  zs = 1  f = 5
+  zc = 1  zm = 9  zs = 2  f = 5
+  zc = 1  zm = 8  zs = 2  f = 5
+  zc = 9  zm = 9  zs = 3  f = 5
+  zc = 9  zm = 8  zs = 3  f = 5
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 1  f = 1		IDAT size = 115190
+
+Output IDAT size = 115190 bytes (19892 bytes decrease)
+Output file size = 115247 bytes (20084 bytes = 14.84% decrease)
+
+** Warning: The option -log is deprecated; use shell redirection
+
+** Processing: minidense.png
+1000x1000 pixels, 3x8 bits/pixel, RGB
+Input IDAT size = 344037 bytes
+Input file size = 344586 bytes
+
+Trying:
+  zc = 9  zm = 9  zs = 0  f = 0
+  zc = 9  zm = 8  zs = 0  f = 0
+  zc = 9  zm = 9  zs = 1  f = 0
+  zc = 9  zm = 8  zs = 1  f = 0
+  zc = 1  zm = 9  zs = 2  f = 0
+  zc = 1  zm = 8  zs = 2  f = 0
+  zc = 9  zm = 9  zs = 3  f = 0
+  zc = 9  zm = 8  zs = 3  f = 0
+  zc = 9  zm = 9  zs = 0  f = 1
+  zc = 9  zm = 8  zs = 0  f = 1
+  zc = 9  zm = 9  zs = 1  f = 1
+  zc = 9  zm = 8  zs = 1  f = 1
+  zc = 1  zm = 9  zs = 2  f = 1
+  zc = 1  zm = 8  zs = 2  f = 1
+  zc = 9  zm = 9  zs = 3  f = 1
+  zc = 9  zm = 8  zs = 3  f = 1
+  zc = 9  zm = 9  zs = 0  f = 2
+  zc = 9  zm = 8  zs = 0  f = 2
+  zc = 9  zm = 9  zs = 1  f = 2
+  zc = 9  zm = 8  zs = 1  f = 2
+  zc = 1  zm = 9  zs = 2  f = 2
+  zc = 1  zm = 8  zs = 2  f = 2
+  zc = 9  zm = 9  zs = 3  f = 2
+  zc = 9  zm = 8  zs = 3  f = 2
+  zc = 9  zm = 9  zs = 0  f = 3
+  zc = 9  zm = 8  zs = 0  f = 3
+  zc = 9  zm = 9  zs = 1  f = 3
+  zc = 9  zm = 8  zs = 1  f = 3
+  zc = 1  zm = 9  zs = 2  f = 3
+  zc = 1  zm = 8  zs = 2  f = 3
+  zc = 9  zm = 9  zs = 3  f = 3
+  zc = 9  zm = 8  zs = 3  f = 3
+  zc = 9  zm = 9  zs = 0  f = 4
+  zc = 9  zm = 8  zs = 0  f = 4
+  zc = 9  zm = 9  zs = 1  f = 4
+  zc = 9  zm = 8  zs = 1  f = 4
+  zc = 1  zm = 9  zs = 2  f = 4
+  zc = 1  zm = 8  zs = 2  f = 4
+  zc = 9  zm = 9  zs = 3  f = 4
+  zc = 9  zm = 8  zs = 3  f = 4
+  zc = 9  zm = 9  zs = 0  f = 5		IDAT size = 335205
+  zc = 9  zm = 8  zs = 0  f = 5		IDAT size = 334597
+  zc = 9  zm = 9  zs = 1  f = 5
+  zc = 9  zm = 8  zs = 1  f = 5
+  zc = 1  zm = 9  zs = 2  f = 5
+  zc = 1  zm = 8  zs = 2  f = 5
+  zc = 9  zm = 9  zs = 3  f = 5
+  zc = 9  zm = 8  zs = 3  f = 5
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 0  f = 5		IDAT size = 334597
+
+Output IDAT size = 334597 bytes (9440 bytes decrease)
+Output file size = 334654 bytes (9932 bytes = 2.88% decrease)
+
+** Warning: The option -log is deprecated; use shell redirection
+
+** Processing: minidense_uv.png
+800x600 pixels, 4x8 bits/pixel, RGB+alpha
+Reducing image to 3x8 bits/pixel, RGB
+Input IDAT size = 700876 bytes
+Input file size = 701990 bytes
+
+Trying:
+  zc = 9  zm = 9  zs = 0  f = 0		IDAT size = 633591
+  zc = 9  zm = 8  zs = 0  f = 0
+  zc = 9  zm = 9  zs = 1  f = 0
+  zc = 9  zm = 8  zs = 1  f = 0
+  zc = 1  zm = 9  zs = 2  f = 0
+  zc = 1  zm = 8  zs = 2  f = 0
+  zc = 9  zm = 9  zs = 3  f = 0
+  zc = 9  zm = 8  zs = 3  f = 0
+  zc = 9  zm = 9  zs = 0  f = 1
+  zc = 9  zm = 8  zs = 0  f = 1
+  zc = 9  zm = 9  zs = 1  f = 1
+  zc = 9  zm = 8  zs = 1  f = 1
+  zc = 1  zm = 9  zs = 2  f = 1
+  zc = 1  zm = 8  zs = 2  f = 1
+  zc = 9  zm = 9  zs = 3  f = 1
+  zc = 9  zm = 8  zs = 3  f = 1
+  zc = 9  zm = 9  zs = 0  f = 2
+  zc = 9  zm = 8  zs = 0  f = 2
+  zc = 9  zm = 9  zs = 1  f = 2
+  zc = 9  zm = 8  zs = 1  f = 2
+  zc = 1  zm = 9  zs = 2  f = 2
+  zc = 1  zm = 8  zs = 2  f = 2
+  zc = 9  zm = 9  zs = 3  f = 2
+  zc = 9  zm = 8  zs = 3  f = 2
+  zc = 9  zm = 9  zs = 0  f = 3
+  zc = 9  zm = 8  zs = 0  f = 3
+  zc = 9  zm = 9  zs = 1  f = 3
+  zc = 9  zm = 8  zs = 1  f = 3
+  zc = 1  zm = 9  zs = 2  f = 3
+  zc = 1  zm = 8  zs = 2  f = 3
+  zc = 9  zm = 9  zs = 3  f = 3
+  zc = 9  zm = 8  zs = 3  f = 3
+  zc = 9  zm = 9  zs = 0  f = 4
+  zc = 9  zm = 8  zs = 0  f = 4
+  zc = 9  zm = 9  zs = 1  f = 4
+  zc = 9  zm = 8  zs = 1  f = 4
+  zc = 1  zm = 9  zs = 2  f = 4
+  zc = 1  zm = 8  zs = 2  f = 4
+  zc = 9  zm = 9  zs = 3  f = 4
+  zc = 9  zm = 8  zs = 3  f = 4
+  zc = 9  zm = 9  zs = 0  f = 5		IDAT size = 623282
+  zc = 9  zm = 8  zs = 0  f = 5		IDAT size = 621945
+  zc = 9  zm = 9  zs = 1  f = 5
+  zc = 9  zm = 8  zs = 1  f = 5
+  zc = 1  zm = 9  zs = 2  f = 5
+  zc = 1  zm = 8  zs = 2  f = 5
+  zc = 9  zm = 9  zs = 3  f = 5
+  zc = 9  zm = 8  zs = 3  f = 5
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 0  f = 5		IDAT size = 621945
+
+Output IDAT size = 621945 bytes (78931 bytes decrease)
+Output file size = 622038 bytes (79952 bytes = 11.39% decrease)
+
+** Warning: The option -log is deprecated; use shell redirection
+
+** Processing: nonperiodic.png
+1000x1000 pixels, 3x8 bits/pixel, RGB
+Input IDAT size = 160054 bytes
+Input file size = 160339 bytes
+
+Trying:
+  zc = 9  zm = 9  zs = 0  f = 0
+  zc = 9  zm = 8  zs = 0  f = 0
+  zc = 9  zm = 9  zs = 1  f = 0
+  zc = 9  zm = 8  zs = 1  f = 0
+  zc = 1  zm = 9  zs = 2  f = 0
+  zc = 1  zm = 8  zs = 2  f = 0
+  zc = 9  zm = 9  zs = 3  f = 0
+  zc = 9  zm = 8  zs = 3  f = 0
+  zc = 9  zm = 9  zs = 0  f = 1		IDAT size = 136259
+  zc = 9  zm = 8  zs = 0  f = 1		IDAT size = 135302
+  zc = 9  zm = 9  zs = 1  f = 1
+  zc = 9  zm = 8  zs = 1  f = 1
+  zc = 1  zm = 9  zs = 2  f = 1
+  zc = 1  zm = 8  zs = 2  f = 1
+  zc = 9  zm = 9  zs = 3  f = 1
+  zc = 9  zm = 8  zs = 3  f = 1
+  zc = 9  zm = 9  zs = 0  f = 2
+  zc = 9  zm = 8  zs = 0  f = 2
+  zc = 9  zm = 9  zs = 1  f = 2
+  zc = 9  zm = 8  zs = 1  f = 2
+  zc = 1  zm = 9  zs = 2  f = 2
+  zc = 1  zm = 8  zs = 2  f = 2
+  zc = 9  zm = 9  zs = 3  f = 2
+  zc = 9  zm = 8  zs = 3  f = 2
+  zc = 9  zm = 9  zs = 0  f = 3
+  zc = 9  zm = 8  zs = 0  f = 3
+  zc = 9  zm = 9  zs = 1  f = 3
+  zc = 9  zm = 8  zs = 1  f = 3
+  zc = 1  zm = 9  zs = 2  f = 3
+  zc = 1  zm = 8  zs = 2  f = 3
+  zc = 9  zm = 9  zs = 3  f = 3
+  zc = 9  zm = 8  zs = 3  f = 3
+  zc = 9  zm = 9  zs = 0  f = 4
+  zc = 9  zm = 8  zs = 0  f = 4
+  zc = 9  zm = 9  zs = 1  f = 4
+  zc = 9  zm = 8  zs = 1  f = 4
+  zc = 1  zm = 9  zs = 2  f = 4
+  zc = 1  zm = 8  zs = 2  f = 4
+  zc = 9  zm = 9  zs = 3  f = 4
+  zc = 9  zm = 8  zs = 3  f = 4
+  zc = 9  zm = 9  zs = 0  f = 5
+  zc = 9  zm = 8  zs = 0  f = 5
+  zc = 9  zm = 9  zs = 1  f = 5
+  zc = 9  zm = 8  zs = 1  f = 5
+  zc = 1  zm = 9  zs = 2  f = 5
+  zc = 1  zm = 8  zs = 2  f = 5
+  zc = 9  zm = 9  zs = 3  f = 5
+  zc = 9  zm = 8  zs = 3  f = 5
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 0  f = 1		IDAT size = 135302
+
+Output IDAT size = 135302 bytes (24752 bytes decrease)
+Output file size = 135359 bytes (24980 bytes = 15.58% decrease)
+
+** Warning: The option -log is deprecated; use shell redirection
+
+** Processing: nonperiodic_uv.png
+800x600 pixels, 4x8 bits/pixel, RGB+alpha
+Reducing image to 3x8 bits/pixel, RGB
+Input IDAT size = 51823 bytes
+Input file size = 51989 bytes
+
+Trying:
+  zc = 9  zm = 9  zs = 0  f = 0		IDAT size = 44455
+  zc = 9  zm = 8  zs = 0  f = 0		IDAT size = 44413
+  zc = 9  zm = 9  zs = 1  f = 0
+  zc = 9  zm = 8  zs = 1  f = 0
+  zc = 1  zm = 9  zs = 2  f = 0
+  zc = 1  zm = 8  zs = 2  f = 0
+  zc = 9  zm = 9  zs = 3  f = 0
+  zc = 9  zm = 8  zs = 3  f = 0
+  zc = 9  zm = 9  zs = 0  f = 1
+  zc = 9  zm = 8  zs = 0  f = 1
+  zc = 9  zm = 9  zs = 1  f = 1
+  zc = 9  zm = 8  zs = 1  f = 1
+  zc = 1  zm = 9  zs = 2  f = 1
+  zc = 1  zm = 8  zs = 2  f = 1
+  zc = 9  zm = 9  zs = 3  f = 1
+  zc = 9  zm = 8  zs = 3  f = 1
+  zc = 9  zm = 9  zs = 0  f = 2
+  zc = 9  zm = 8  zs = 0  f = 2
+  zc = 9  zm = 9  zs = 1  f = 2
+  zc = 9  zm = 8  zs = 1  f = 2
+  zc = 1  zm = 9  zs = 2  f = 2
+  zc = 1  zm = 8  zs = 2  f = 2
+  zc = 9  zm = 9  zs = 3  f = 2
+  zc = 9  zm = 8  zs = 3  f = 2
+  zc = 9  zm = 9  zs = 0  f = 3
+  zc = 9  zm = 8  zs = 0  f = 3
+  zc = 9  zm = 9  zs = 1  f = 3
+  zc = 9  zm = 8  zs = 1  f = 3
+  zc = 1  zm = 9  zs = 2  f = 3
+  zc = 1  zm = 8  zs = 2  f = 3
+  zc = 9  zm = 9  zs = 3  f = 3
+  zc = 9  zm = 8  zs = 3  f = 3
+  zc = 9  zm = 9  zs = 0  f = 4
+  zc = 9  zm = 8  zs = 0  f = 4
+  zc = 9  zm = 9  zs = 1  f = 4
+  zc = 9  zm = 8  zs = 1  f = 4
+  zc = 1  zm = 9  zs = 2  f = 4
+  zc = 1  zm = 8  zs = 2  f = 4
+  zc = 9  zm = 9  zs = 3  f = 4
+  zc = 9  zm = 8  zs = 3  f = 4
+  zc = 9  zm = 9  zs = 0  f = 5
+  zc = 9  zm = 8  zs = 0  f = 5
+  zc = 9  zm = 9  zs = 1  f = 5
+  zc = 9  zm = 8  zs = 1  f = 5
+  zc = 1  zm = 9  zs = 2  f = 5
+  zc = 1  zm = 8  zs = 2  f = 5
+  zc = 9  zm = 9  zs = 3  f = 5
+  zc = 9  zm = 8  zs = 3  f = 5
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 0  f = 0		IDAT size = 44413
+
+Output IDAT size = 44413 bytes (7410 bytes decrease)
+Output file size = 44506 bytes (7483 bytes = 14.39% decrease)
+
+** Warning: The option -log is deprecated; use shell redirection
+
+** Processing: periodic.png
+1000x1000 pixels, 3x8 bits/pixel, RGB
+Input IDAT size = 209173 bytes
+Input file size = 209530 bytes
+
+Trying:
+  zc = 9  zm = 9  zs = 0  f = 0
+  zc = 9  zm = 8  zs = 0  f = 0
+  zc = 9  zm = 9  zs = 1  f = 0
+  zc = 9  zm = 8  zs = 1  f = 0
+  zc = 1  zm = 9  zs = 2  f = 0
+  zc = 1  zm = 8  zs = 2  f = 0
+  zc = 9  zm = 9  zs = 3  f = 0
+  zc = 9  zm = 8  zs = 3  f = 0
+  zc = 9  zm = 9  zs = 0  f = 1		IDAT size = 196371
+  zc = 9  zm = 8  zs = 0  f = 1		IDAT size = 195125
+  zc = 9  zm = 9  zs = 1  f = 1
+  zc = 9  zm = 8  zs = 1  f = 1
+  zc = 1  zm = 9  zs = 2  f = 1
+  zc = 1  zm = 8  zs = 2  f = 1
+  zc = 9  zm = 9  zs = 3  f = 1
+  zc = 9  zm = 8  zs = 3  f = 1
+  zc = 9  zm = 9  zs = 0  f = 2
+  zc = 9  zm = 8  zs = 0  f = 2
+  zc = 9  zm = 9  zs = 1  f = 2
+  zc = 9  zm = 8  zs = 1  f = 2
+  zc = 1  zm = 9  zs = 2  f = 2
+  zc = 1  zm = 8  zs = 2  f = 2
+  zc = 9  zm = 9  zs = 3  f = 2
+  zc = 9  zm = 8  zs = 3  f = 2
+  zc = 9  zm = 9  zs = 0  f = 3
+  zc = 9  zm = 8  zs = 0  f = 3
+  zc = 9  zm = 9  zs = 1  f = 3
+  zc = 9  zm = 8  zs = 1  f = 3
+  zc = 1  zm = 9  zs = 2  f = 3
+  zc = 1  zm = 8  zs = 2  f = 3
+  zc = 9  zm = 9  zs = 3  f = 3
+  zc = 9  zm = 8  zs = 3  f = 3
+  zc = 9  zm = 9  zs = 0  f = 4
+  zc = 9  zm = 8  zs = 0  f = 4
+  zc = 9  zm = 9  zs = 1  f = 4
+  zc = 9  zm = 8  zs = 1  f = 4
+  zc = 1  zm = 9  zs = 2  f = 4
+  zc = 1  zm = 8  zs = 2  f = 4
+  zc = 9  zm = 9  zs = 3  f = 4
+  zc = 9  zm = 8  zs = 3  f = 4
+  zc = 9  zm = 9  zs = 0  f = 5
+  zc = 9  zm = 8  zs = 0  f = 5
+  zc = 9  zm = 9  zs = 1  f = 5
+  zc = 9  zm = 8  zs = 1  f = 5
+  zc = 1  zm = 9  zs = 2  f = 5
+  zc = 1  zm = 8  zs = 2  f = 5
+  zc = 9  zm = 9  zs = 3  f = 5
+  zc = 9  zm = 8  zs = 3  f = 5
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 0  f = 1		IDAT size = 195125
+
+Output IDAT size = 195125 bytes (14048 bytes decrease)
+Output file size = 195182 bytes (14348 bytes = 6.85% decrease)
+
+** Warning: The option -log is deprecated; use shell redirection
+
+** Processing: periodic_uv.png
+800x600 pixels, 4x8 bits/pixel, RGB+alpha
+Reducing image to 3x8 bits/pixel, RGB
+Input IDAT size = 200130 bytes
+Input file size = 200512 bytes
+
+Trying:
+  zc = 9  zm = 9  zs = 0  f = 0		IDAT size = 173275
+  zc = 9  zm = 8  zs = 0  f = 0		IDAT size = 171353
+  zc = 9  zm = 9  zs = 1  f = 0
+  zc = 9  zm = 8  zs = 1  f = 0
+  zc = 1  zm = 9  zs = 2  f = 0
+  zc = 1  zm = 8  zs = 2  f = 0
+  zc = 9  zm = 9  zs = 3  f = 0
+  zc = 9  zm = 8  zs = 3  f = 0
+  zc = 9  zm = 9  zs = 0  f = 1
+  zc = 9  zm = 8  zs = 0  f = 1
+  zc = 9  zm = 9  zs = 1  f = 1
+  zc = 9  zm = 8  zs = 1  f = 1
+  zc = 1  zm = 9  zs = 2  f = 1
+  zc = 1  zm = 8  zs = 2  f = 1
+  zc = 9  zm = 9  zs = 3  f = 1
+  zc = 9  zm = 8  zs = 3  f = 1
+  zc = 9  zm = 9  zs = 0  f = 2
+  zc = 9  zm = 8  zs = 0  f = 2
+  zc = 9  zm = 9  zs = 1  f = 2
+  zc = 9  zm = 8  zs = 1  f = 2
+  zc = 1  zm = 9  zs = 2  f = 2
+  zc = 1  zm = 8  zs = 2  f = 2
+  zc = 9  zm = 9  zs = 3  f = 2
+  zc = 9  zm = 8  zs = 3  f = 2
+  zc = 9  zm = 9  zs = 0  f = 3
+  zc = 9  zm = 8  zs = 0  f = 3
+  zc = 9  zm = 9  zs = 1  f = 3
+  zc = 9  zm = 8  zs = 1  f = 3
+  zc = 1  zm = 9  zs = 2  f = 3
+  zc = 1  zm = 8  zs = 2  f = 3
+  zc = 9  zm = 9  zs = 3  f = 3
+  zc = 9  zm = 8  zs = 3  f = 3
+  zc = 9  zm = 9  zs = 0  f = 4
+  zc = 9  zm = 8  zs = 0  f = 4
+  zc = 9  zm = 9  zs = 1  f = 4
+  zc = 9  zm = 8  zs = 1  f = 4
+  zc = 1  zm = 9  zs = 2  f = 4
+  zc = 1  zm = 8  zs = 2  f = 4
+  zc = 9  zm = 9  zs = 3  f = 4
+  zc = 9  zm = 8  zs = 3  f = 4
+  zc = 9  zm = 9  zs = 0  f = 5
+  zc = 9  zm = 8  zs = 0  f = 5		IDAT size = 169757
+  zc = 9  zm = 9  zs = 1  f = 5
+  zc = 9  zm = 8  zs = 1  f = 5
+  zc = 1  zm = 9  zs = 2  f = 5
+  zc = 1  zm = 8  zs = 2  f = 5
+  zc = 9  zm = 9  zs = 3  f = 5
+  zc = 9  zm = 8  zs = 3  f = 5
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 0  f = 5		IDAT size = 169757
+
+Output IDAT size = 169757 bytes (30373 bytes decrease)
+Output file size = 169850 bytes (30662 bytes = 15.29% decrease)
+
+** Warning: The option -log is deprecated; use shell redirection
+
+** Processing: poincare.png
+800x600 pixels, 4x8 bits/pixel, RGB+alpha
+Reducing image to 3x8 bits/pixel, RGB
+Input IDAT size = 55975 bytes
+Input file size = 56141 bytes
+
+Trying:
+  zc = 9  zm = 9  zs = 0  f = 0		IDAT size = 43495
+  zc = 9  zm = 8  zs = 0  f = 0		IDAT size = 43466
+  zc = 9  zm = 9  zs = 1  f = 0
+  zc = 9  zm = 8  zs = 1  f = 0
+  zc = 1  zm = 9  zs = 2  f = 0
+  zc = 1  zm = 8  zs = 2  f = 0
+  zc = 9  zm = 9  zs = 3  f = 0
+  zc = 9  zm = 8  zs = 3  f = 0
+  zc = 9  zm = 9  zs = 0  f = 1
+  zc = 9  zm = 8  zs = 0  f = 1
+  zc = 9  zm = 9  zs = 1  f = 1
+  zc = 9  zm = 8  zs = 1  f = 1
+  zc = 1  zm = 9  zs = 2  f = 1
+  zc = 1  zm = 8  zs = 2  f = 1
+  zc = 9  zm = 9  zs = 3  f = 1
+  zc = 9  zm = 8  zs = 3  f = 1
+  zc = 9  zm = 9  zs = 0  f = 2
+  zc = 9  zm = 8  zs = 0  f = 2
+  zc = 9  zm = 9  zs = 1  f = 2
+  zc = 9  zm = 8  zs = 1  f = 2
+  zc = 1  zm = 9  zs = 2  f = 2
+  zc = 1  zm = 8  zs = 2  f = 2
+  zc = 9  zm = 9  zs = 3  f = 2
+  zc = 9  zm = 8  zs = 3  f = 2
+  zc = 9  zm = 9  zs = 0  f = 3
+  zc = 9  zm = 8  zs = 0  f = 3
+  zc = 9  zm = 9  zs = 1  f = 3
+  zc = 9  zm = 8  zs = 1  f = 3
+  zc = 1  zm = 9  zs = 2  f = 3
+  zc = 1  zm = 8  zs = 2  f = 3
+  zc = 9  zm = 9  zs = 3  f = 3
+  zc = 9  zm = 8  zs = 3  f = 3
+  zc = 9  zm = 9  zs = 0  f = 4
+  zc = 9  zm = 8  zs = 0  f = 4
+  zc = 9  zm = 9  zs = 1  f = 4
+  zc = 9  zm = 8  zs = 1  f = 4
+  zc = 1  zm = 9  zs = 2  f = 4
+  zc = 1  zm = 8  zs = 2  f = 4
+  zc = 9  zm = 9  zs = 3  f = 4
+  zc = 9  zm = 8  zs = 3  f = 4
+  zc = 9  zm = 9  zs = 0  f = 5
+  zc = 9  zm = 8  zs = 0  f = 5
+  zc = 9  zm = 9  zs = 1  f = 5
+  zc = 9  zm = 8  zs = 1  f = 5
+  zc = 1  zm = 9  zs = 2  f = 5
+  zc = 1  zm = 8  zs = 2  f = 5
+  zc = 9  zm = 9  zs = 3  f = 5
+  zc = 9  zm = 8  zs = 3  f = 5
+
+Selecting parameters:
+  zc = 9  zm = 8  zs = 0  f = 0		IDAT size = 43466
+
+Output IDAT size = 43466 bytes (12509 bytes decrease)
+Output file size = 43559 bytes (12582 bytes = 22.41% decrease)
+

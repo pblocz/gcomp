@@ -1,10 +1,11 @@
-#! /usr/bin/python2
-# -*- coding: utf-8 -*-
-'''
-Practica 3
+#!/usr/bin/env python2
+# coding=utf-8
 
-@author: Pablo Cabeza García y Diego González
 '''
+Computational Geometry Assignments | (c) 2015 Pablo Cabeza & Diego González
+license: [modified BSD](http://opensource.org/licenses/BSD-3-Clause)
+'''
+
 import sys
 import re
 import argparse
