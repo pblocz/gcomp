@@ -188,8 +188,9 @@ def main(args=None):
 
     from random import shuffle
 
-    rx = list(range(2 * 5)); shuffle(rx)
-    ry = list(range(2 * 5)); shuffle(ry)
+    npo = 6
+    rx = list(range(2 * npo)); shuffle(rx)
+    ry = list(range(2 * npo)); shuffle(ry)
     r = list(zip(rx, ry))
     rand = zip(r[0::2], r[1::2])
 
@@ -200,6 +201,7 @@ def main(args=None):
             plt.plot([p[0] for p in s], [p[1] for p in s], "g")
             plt.plot(*(tuple() + s.left + ('b.', )))
             plt.plot(*(tuple() + s.right + ('r.', )))
+        return rand
     global plot  # export plot for debugging purposes
     plot = _plot
 
@@ -212,4 +214,11 @@ def main(args=None):
     return (rand, intr, plot)
 
 
-if __name__ == "__main__": sys.exit(main())
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except KeyError:
+        logger.error("KeyError, try using global plot() to debug the points in"
+                     "interactive mode")
+        plot()
+        plt.show()
