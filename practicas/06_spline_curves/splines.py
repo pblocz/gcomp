@@ -1,12 +1,13 @@
-#! /usr/bin/env python2
-# -*- encoding: utf-8 -*-
+#!/usr/bin/env python2
+# coding=utf-8
 
 '''
+Computational Geometry Assignments | (c) 2015 Pablo Cabeza & Diego González
+license: [modified BSD](http://opensource.org/licenses/BSD-3-Clause)
+
 Different implementations for interpolating polynomials.
-
-authors: Pablo Cabeza & Diego González
-date: 29/04/2015
 '''
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -19,7 +20,7 @@ def boor_coef(i, r, k, knots, t):
 
 def boor_step(i, r, k, knots, points, t):
     if r == 0:
-        ret = np.empty_like(t); ret.fill(points[i+1])
+        ret = np.empty_like(t); ret.fill(points[i + 1])
         return ret
 
     coef = boor_coef(i, r, k, knots, t)
@@ -28,7 +29,6 @@ def boor_step(i, r, k, knots, points, t):
     res = (1 - coef) * boor1 +\
             coef * boor2
     return res
-
 
 
 def spline2d(a, b, psi, k, nu, A, num_dots):
@@ -51,15 +51,15 @@ def spline2d(a, b, psi, k, nu, A, num_dots):
     the spline curve as a numpy array of size (2, num_dots)
     '''
 
-    psi = np.array(psi, dtype = 'f')
-    nu = np.array(nu, dtype = 'f')
-    A = np.array(A, dtype = 'f')
+    psi = np.array(psi, dtype='f')
+    nu = np.array(nu, dtype='f')
+    A = np.array(A, dtype='f')
 
-    if len(nu)!=len(psi): return -1
+    if len(nu) != len(psi): return -1
 
     t = np.linspace(a, b, num_dots)
 
-    nknots = 2*k + k*len(nu) - sum(nu)
+    nknots = 2 * k + k * len(nu) - sum(nu)
     knots, k_points = np.empty(nknots), np.empty([nknots, 2])
 
     knots[:k].fill(a); knots[-k:].fill(b)
@@ -74,19 +74,17 @@ def spline2d(a, b, psi, k, nu, A, num_dots):
         k_points[idx:idx + off][:, 1].fill(A[i, 1])
         idx += off
 
-
     ret1, ret2, N = [], [], len(knots)
     for l in xrange(N):  # calculamos a_j^{k-1}
         if l == N - 1: break
 
-
         cond = (t >= knots[l]) & \
-            ((t <= knots[l+1]) if l == N - k else (t < knots[l+1]))
+            ((t <= knots[l + 1]) if l == N - k else (t < knots[l + 1]))
         eval_points = t[cond]
 
         if len(eval_points) == 0: continue
 
-        ret1.append(boor_step(l, k - 1, k - 1, knots, A[:,0], eval_points))
-        ret2.append(boor_step(l, k - 1, k - 1, knots, A[:,1], eval_points))
+        ret1.append(boor_step(l, k - 1, k - 1, knots, A[:, 0], eval_points))
+        ret2.append(boor_step(l, k - 1, k - 1, knots, A[:, 1], eval_points))
 
     return np.array([np.concatenate(ret1), np.concatenate(ret2)])

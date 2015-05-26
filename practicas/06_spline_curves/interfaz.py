@@ -1,20 +1,24 @@
-#! /usr/bin/env python2
-# -*- encoding: utf-8 -*-
+#!/usr/bin/env python2
+# coding=utf-8
 
 '''
-authors: Pablo Cabeza & Diego González
+Computational Geometry Assignments | (c) 2015 Pablo Cabeza & Diego González
+license: [modified BSD](http://opensource.org/licenses/BSD-3-Clause)
 '''
+
 
 import numpy as np
 import scipy.interpolate as sc
 import matplotlib.pyplot as plt
 from Tkinter import *
-from ttk import * 
+from ttk import *
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.backend_bases import key_press_handler
-from spline import spline2d
-  
+
+from splines import spline2d
+
+
 class DrawPoints(object):
     def __init__(self, points):
         self.plt_points = points
@@ -23,7 +27,7 @@ class DrawPoints(object):
         self.polygon = zip(self.xs, self.ys)
         self.plt_curve, = points.axes.plot([], [], 'k')
         self.selected_point = None
-        
+
         self.a = 0
         self.b = 1
         self.xi = []
@@ -31,12 +35,12 @@ class DrawPoints(object):
         self.nu = []
         self.A = self.plt_points
         self.num_dots = 100
-        
+
         self.cid_press = self.plt_points.figure.canvas.mpl_connect('button_press_event', self.press_event)
         self.cid_move = self.plt_points.figure.canvas.mpl_connect('motion_notify_event', self.move_event)
         self.cid_release = self.plt_points.figure.canvas.mpl_connect('button_release_event', self.release_event)
         self.cid_erease = self.plt_points.figure.canvas.mpl_connect('button_press_event', self.erease_event)
-        
+
     def update_data(self, a, b, xi, k, nu, num_dots):
         self.a = a
         self.b = b
@@ -44,48 +48,48 @@ class DrawPoints(object):
         self.k = k
         self.nu = nu
         self.num_dots = 100
-              
+
     def update_curve(self):
-        p = spline2d(self.a, self.b, self.xi, self.k, self.nu, np.array(self.polygon), self.num_dots)
+        p = spline2d(self.a, self.b, self.xi, self.k, self.nu, np.array(self.polygon), self.num_dots).T
         self.plt_curve.set_data([x for x,_ in p], [y for _,y in p])
         self.plt_points.set_data(self.xs, self.ys)
         self.plt_points.figure.canvas.draw()
-        
+
     def update_curve2(self):
         self.plt_curve, = self.plt_points.axes.plot([], [], 'k')
         self.plt_points.set_data(self.xs, self.ys)
         self.plt_points.figure.canvas.draw()
-    
+
     def new_point(self, event):
         self.xs.append(event.xdata)
         self.ys.append(event.ydata)
         self.polygon.append([event.xdata,event.ydata])
         self.update_curve2()
-         
+
     def press_event(self, event):
-        if event.inaxes != self.plt_points.axes or event.button != 1: 
+        if event.inaxes != self.plt_points.axes or event.button != 1:
             return
         state, indices = self.plt_points.contains(event)
         if not state:
             self.new_point(event)
         else:
             self.selected_point = indices['ind'][0]
-            
-    def move_event(self, event): 
+
+    def move_event(self, event):
         if event.inaxes != self.plt_points.axes or self.selected_point is None:
             return
         self.xs[self.selected_point] = event.xdata
         self.ys[self.selected_point] = event.ydata
         self.polygon[self.selected_point] = [event.xdata,event.ydata]
-        self.update_curve()     
-        
-    def release_event(self, event):  
-        if event.inaxes != self.plt_points.axes: 
+        self.update_curve()
+
+    def release_event(self, event):
+        if event.inaxes != self.plt_points.axes:
             return
         self.selected_point = None
-        
+
     def erease_event(self, event):
-        if event.inaxes != self.plt_points.axes or event.button != 3: 
+        if event.inaxes != self.plt_points.axes or event.button != 3:
             return
         state, indices = self.plt_points.contains(event)
         if state:
@@ -93,18 +97,18 @@ class DrawPoints(object):
             del self.xs[index]
             del self.ys[index]
             del self.polygon[index]
-            self.update_curve2() 
+            self.update_curve2()
 
 def main(args=None):
     args = args or sys.argv
-    
+
     #Se crea la ventana
     root = Tk()
     root.title("Plane Spline Curve")
-    
+
     #Se crea la zona para seleccionar los nodos
     knots = Frame(root)
-    knots.pack(anchor=W) 
+    knots.pack(anchor=W)
     alabel = Label(knots, text="a: ")
     alabel.pack(side=LEFT, padx=2, pady=2)
     La = StringVar()
@@ -123,30 +127,30 @@ def main(args=None):
     Lxi.set("1 2 3")
     Lxivalue = Entry(knots, textvariable=Lxi, width=30, justify=LEFT)
     Lxivalue.pack(side=LEFT)
-    
+
     #Se crea la zona para seleccionar el orden
     order = Frame(root)
-    order.pack(anchor=W) 
+    order.pack(anchor=W)
     klabel = Label(order, text="Order of the curve: ")
     klabel.pack(side=LEFT, padx=2, pady=2)
     Lk = StringVar()
     Lk.set("3")
     Lkvalue = Entry(order, textvariable=Lk, width=3, justify=CENTER)
     Lkvalue.pack(side=LEFT)
-    
+
     #Se crea la zona para seleccionar el numero de condiciones
     smooth = Frame(root)
-    smooth.pack(anchor=W) 
+    smooth.pack(anchor=W)
     nulabel = Label(smooth, text="Number of smoothness conditions (integers separated by spaces): ")
     nulabel.pack(side=LEFT, padx=2, pady=2)
     Lnu = StringVar()
     Lnu.set("2 2 2")
     Lnuvalue = Entry(smooth, textvariable=Lnu, width=30, justify=LEFT)
     Lnuvalue.pack(side=LEFT)
-    
+
     #Se crea la zona para seleccionar el numero de puntos:
     points = Frame(root)
-    points.pack(anchor=W) 
+    points.pack(anchor=W)
     plabel = Label(points, text="Number of dots: ")
     plabel.pack(side=LEFT, padx=2, pady=2)
     P = StringVar()
@@ -154,8 +158,8 @@ def main(args=None):
     Pvalue = Entry(points, textvariable=P, width=5, justify=CENTER)
     Pvalue.pack()
     buttons = Frame(root)
-    buttons.pack() 
-            
+    buttons.pack()
+
     #Se crea la grafica
     fig = Figure(figsize=(5,4), dpi=100)
     ax = fig.add_subplot(111)
@@ -166,11 +170,11 @@ def main(args=None):
     toolbar = NavigationToolbar2TkAgg(canvas, root)
     toolbar.update()
     canvas._tkcanvas.pack(side=TOP, fill=BOTH, expand=1)
-    
+
     #Se generan los puntos e interpolamos
     points, = ax.plot([], [], 'ro-')
     linebuilder = DrawPoints(points)
-    
+
     #Se crea el boton para interpolar
     def update():
         a = float(Lavalue.get())
@@ -184,12 +188,12 @@ def main(args=None):
         linebuilder.update_curve()
     button = Button(buttons, text="NEW SPLINE CURVE", command=update)
     button.pack()
-    
+
     #Se añade un pequeño tutorial:
     Ti = Text(root, height=4, width=50)
     Ti.pack()
     Ti.insert(END, '''INSTRUCTIONS: Left click to introduce points and  drag to move them or right click to erase them. Tofind the plane spline curve, configure above      options and pulse the button.''')
-    
+
     root.mainloop()
 
 if __name__ == "__main__": sys.exit(main())
