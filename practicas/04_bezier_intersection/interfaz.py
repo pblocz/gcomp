@@ -175,8 +175,8 @@ def main(args=None):
     dataE.pack(side=LEFT, padx=2, pady=2)
 
     #Se generan los poligonos y sus curvas de Bezier
-    pointsA, = ax.plot([], [], 'ro')
-    pointsB, = ax.plot([], [], 'bo')
+    pointsA, = ax.plot([], [], 'ro--')
+    pointsB, = ax.plot([], [], 'bo--')
     linebuilder = DrawCurves(pointsA, pointsB)
 
     #Una vez generadas las curvas, se generar las funciones que tendran los botones
