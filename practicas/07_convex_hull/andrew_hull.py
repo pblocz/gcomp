@@ -1,9 +1,9 @@
 #!/usr/bin/env python2
-# -*- encoding: utf-8 -*-
+# coding=utf-8
 
 '''
 Computational Geometry Assignments | (c) 2015 Pablo Cabeza & Diego González
-license: modified BSD (http://opensource.org/licenses/BSD-3-Clause)
+license: [modified BSD](http://opensource.org/licenses/BSD-3-Clause)
 '''
 
 import numpy as np
